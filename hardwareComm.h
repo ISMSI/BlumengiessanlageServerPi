@@ -9,11 +9,20 @@
 #include <unistd.h>
 #include <iostream>       // std::cout
 #include <string>
+#include <map>
 
 
 
 class HardwareComm
 {
+public:
+    enum ADC_CHANNEL
+    {
+        CHADC0 = 0,
+        CHADC1 = 1,
+        CHADC2 = 2,
+        CHADC3 = 3,
+    };
 
 private:
 wchar_t *programName;
@@ -30,6 +39,9 @@ wchar_t *programName;
         PyObject* myConst_P3;
         PyObject* myKey_address = PyUnicode_FromString("address");
  
+        std::map<uint8_t, PyObject*> adcChannelMap;
+        
+
 public:
     HardwareComm();
     ~HardwareComm();
@@ -48,10 +60,10 @@ public:
 
     enum MUX_CHANNEL
     {
-        CHN0 = 0,
-        CHN1 = 1,
-        CHN2 = 2,
-        CHN3 = 3,
+        CHMUX0 = 0,
+        CHMUX1 = 1,
+        CHMUX2 = 2,
+        CHMUX3 = 3,
     };
 
     enum ADC_ADDRESS
@@ -62,7 +74,9 @@ public:
         ADC3 = 0x4B,
     };
 
-    double getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChannel, ADC_ADDRESS adcAddress);
+
+
+    double getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChannel, ADC_ADDRESS adcAddress, ADC_CHANNEL adcChannel);
     bool initFunctions();
 
 

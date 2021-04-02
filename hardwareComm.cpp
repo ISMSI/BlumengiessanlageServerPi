@@ -6,6 +6,10 @@ HardwareComm::HardwareComm()
     programName = Py_DecodeLocale("HardwareComm", NULL);
     Py_SetProgramName(programName);
     Py_Initialize();
+    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC1, myConst_P0));
+    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC1, myConst_P1));
+    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC2, myConst_P2));
+    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC3, myConst_P3));
 }
 
 HardwareComm::~HardwareComm()
@@ -81,7 +85,7 @@ bool HardwareComm::initFunctions()
         return true;
 }
 
-double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChannel, ADC_ADDRESS adcAddress)
+double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChannel, ADC_ADDRESS adcAddress, ADC_CHANNEL adcChannel)
 {
         /* Get i2c obj */
         PyObject* myArgs_SDA_SCL = PyTuple_New(2);
@@ -121,12 +125,12 @@ double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChann
 
 
         /* Get sensore value obj from ADC channel 0*/
-        PyObject* myArgs_tsl_P0 = PyTuple_New(2);
-        PyTuple_SetItem(myArgs_tsl_P0,0,myResult_tsl);
-        PyTuple_SetItem(myArgs_tsl_P0,1,myConst_P0);
+        PyObject* myArgs_tsl_P = PyTuple_New(2);
+        PyTuple_SetItem(myArgs_tsl_P,0,myResult_tsl);
+        PyTuple_SetItem(myArgs_tsl_P,1,adcChannelMap[adcChannel]);
 
-        PyObject* myResult_chan0 = PyObject_CallObject(myFunction_analog_in, myArgs_tsl_P0);
+        PyObject* myResult_chan = PyObject_CallObject(myFunction_analog_in, myArgs_tsl_P);
 
     /* Get voltage value from sensor value obj*/
-    return PyFloat_AsDouble(PyObject_GetAttrString(myResult_chan0,"voltage"));
+    return PyFloat_AsDouble(PyObject_GetAttrString(myResult_chan,"voltage"));
 }
