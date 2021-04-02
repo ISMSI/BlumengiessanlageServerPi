@@ -46,6 +46,14 @@ public:
         MUX7 = 0x77
     };
 
+    enum MUX_CHANNEL
+    {
+        CHN0 = 0,
+        CHN1 = 1,
+        CHN2 = 2,
+        CHN3 = 3,
+    };
+
     enum ADC_ADDRESS
     {
         ADC0 = 0x48,
@@ -54,7 +62,7 @@ public:
         ADC3 = 0x4B,
     };
 
-    double getSensorValue(MUX_ADDRESS muxAddress, ADC_ADDRESS adcAddress);
+    double getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChannel, ADC_ADDRESS adcAddress);
     bool initFunctions();
 
 

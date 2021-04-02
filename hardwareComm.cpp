@@ -81,7 +81,7 @@ bool HardwareComm::initFunctions()
         return true;
 }
 
-double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, ADC_ADDRESS adcAddress)
+double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChannel, ADC_ADDRESS adcAddress)
 {
         /* Get i2c obj */
         PyObject* myArgs_SDA_SCL = PyTuple_New(2);
@@ -102,30 +102,30 @@ double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, ADC_ADDRESS adcAddre
         PyObject* myResult_tca = PyObject_Call(myFunction_TCA9548A, myArgs_i2c, myArgs_muxAddress);
 
 
-        /* Get ADC obj from MUX channel 0 */
-        PyObject* myArgs_tca0 = PyTuple_New(1);
-        PyObject* myValue_tca0 = PyObject_GetItem(myResult_tca,PyLong_FromLong(0));
-        PyTuple_SetItem(myArgs_tca0,0,myValue_tca0);
+        /* Get ADC obj from MUX channel */
+        PyObject* myArgs_tca = PyTuple_New(1);
+        PyObject* myValue_tca = PyObject_GetItem(myResult_tca,PyLong_FromLong(muxChannel));
+        PyTuple_SetItem(myArgs_tca,0,myValue_tca);
 
         PyObject* myValue_adcAddress = PyLong_FromLong(adcAddress);
         PyObject* myArgs_adcAddress = PyDict_New();
         PyDict_SetItem(myArgs_adcAddress, myKey_address, myValue_adcAddress);
 
-        PyObject* myResult_tsl0 = PyObject_Call(myFunction_ADS1115, myArgs_tca0, myValue_adcAddress);
+        PyObject* myResult_tsl = PyObject_Call(myFunction_ADS1115, myArgs_tca, myValue_adcAddress);
 
 
         /* Configure gain for ADC*/
         PyObject* myAttrString_gain = PyUnicode_FromString((char*)"gain");
         PyObject* myValue_gain2_3 = PyFloat_FromDouble(2.0/3.0);
-        PyObject_SetAttr(myResult_tsl0,myAttrString_gain, myValue_gain2_3);
+        PyObject_SetAttr(myResult_tsl,myAttrString_gain, myValue_gain2_3);
 
 
         /* Get sensore value obj from ADC channel 0*/
-        PyObject* myArgs_tsl0_P0 = PyTuple_New(2);
-        PyTuple_SetItem(myArgs_tsl0_P0,0,myResult_tsl0);
-        PyTuple_SetItem(myArgs_tsl0_P0,1,myConst_P0);
+        PyObject* myArgs_tsl_P0 = PyTuple_New(2);
+        PyTuple_SetItem(myArgs_tsl_P0,0,myResult_tsl);
+        PyTuple_SetItem(myArgs_tsl_P0,1,myConst_P0);
 
-        PyObject* myResult_chan0 = PyObject_CallObject(myFunction_analog_in, myArgs_tsl0_P0);
+        PyObject* myResult_chan0 = PyObject_CallObject(myFunction_analog_in, myArgs_tsl_P0);
 
     /* Get voltage value from sensor value obj*/
     return PyFloat_AsDouble(PyObject_GetAttrString(myResult_chan0,"voltage"));
