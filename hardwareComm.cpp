@@ -6,7 +6,8 @@ HardwareComm::HardwareComm()
     programName = Py_DecodeLocale("HardwareComm", NULL);
     Py_SetProgramName(programName);
     Py_Initialize();
-    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC1, myConst_P0));
+    initFunctions();
+    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC0, myConst_P0));
     adcChannelMap.insert(std::make_pair(HardwareComm::CHADC1, myConst_P1));
     adcChannelMap.insert(std::make_pair(HardwareComm::CHADC2, myConst_P2));
     adcChannelMap.insert(std::make_pair(HardwareComm::CHADC3, myConst_P3));
@@ -126,8 +127,8 @@ double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChann
 
         /* Get sensore value obj from ADC channel 0*/
         PyObject* myArgs_tsl_P = PyTuple_New(2);
-        PyTuple_SetItem(myArgs_tsl_P,0,myResult_tsl);
-        PyTuple_SetItem(myArgs_tsl_P,1,adcChannelMap[adcChannel]);
+        PyTuple_SetItem(myArgs_tsl_P,0, myResult_tsl);
+        PyTuple_SetItem(myArgs_tsl_P,1, adcChannelMap[adcChannel]);
 
         PyObject* myResult_chan = PyObject_CallObject(myFunction_analog_in, myArgs_tsl_P);
 

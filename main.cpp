@@ -37,7 +37,9 @@ int main()
     //test_th.join();
 
     HardwareComm comm = HardwareComm();
-    comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC0);
+    std::cout << comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC0) << std::endl;
+    std::cout << comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC1) << std::endl;
+    std::cout << comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC2) << std::endl;
 
     //sigwait(&signals, &sig);
 
