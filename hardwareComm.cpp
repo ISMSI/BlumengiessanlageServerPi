@@ -14,8 +14,9 @@ HardwareComm::~HardwareComm()
     PyMem_RawFree(programName);
 }
 
-double HardwareComm::getSensorValue()
+bool HardwareComm::initFunctions()
 {
+
     PyObject* myModuleString_board = PyUnicode_FromString((char*)"board");
     PyObject* myModuleString_busio = PyUnicode_FromString((char*)"busio");
     PyObject* myModuleString_adafruit_tca9548a = PyUnicode_FromString((char*)"adafruit_tca9548a");
@@ -36,41 +37,56 @@ double HardwareComm::getSensorValue()
     )
     {
         std::cout << "Error: Module" << std::endl;
-        return -1;
+        return false;
     }
 
         PyObject* myConstString_SCL = PyUnicode_FromString((char*)"SCL");
         PyObject* myConstString_SDA = PyUnicode_FromString((char*)"SDA");
     
-        PyObject* myConst_SCL = PyObject_GetAttr(myModule_board,myConstString_SCL);
-        PyObject* myConst_SDA = PyObject_GetAttr(myModule_board, myConstString_SDA);
+  
 
-        PyObject* myFunction_I2C = PyObject_GetAttrString(myModule_busio,(char*)"I2C");
-        PyObject* myFunction_TCA9548A = PyObject_GetAttrString(myModule_adafruit_tca9548a,(char*)"TCA9548A");
-        PyObject* myFunction_ADS1115 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"ADS1115");
-        PyObject* myFunction_analog_in = PyObject_GetAttrString(myModule_adafruit_ads1x15_analog_in,(char*)"AnalogIn");
+        myFunction_I2C = PyObject_GetAttrString(myModule_busio,(char*)"I2C");
+        myFunction_TCA9548A = PyObject_GetAttrString(myModule_adafruit_tca9548a,(char*)"TCA9548A");
+        myFunction_ADS1115 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"ADS1115");
+        myFunction_analog_in = PyObject_GetAttrString(myModule_adafruit_ads1x15_analog_in,(char*)"AnalogIn");
+
+        myConst_SCL = PyObject_GetAttr(myModule_board,myConstString_SCL);
+        myConst_SDA = PyObject_GetAttr(myModule_board, myConstString_SDA);
+        myConst_P0 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P0");
+        myConst_P1 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P1");
+        myConst_P2 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P2");
+        myConst_P3 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P3");
+        myConst_P4 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P4");
+        myConst_P5 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P5");
+        myConst_P6 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P6");
+        myConst_P7 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P7");
         
         if( !myFunction_I2C || !PyCallable_Check(myFunction_I2C) )
         {
             std::cout << "Error: myFunction_I2C" << std::endl;
-            return -1;
+            return false;
         }
         if( !myFunction_TCA9548A || !PyCallable_Check(myFunction_TCA9548A) )
         {
             std::cout << "Error: myFunction_TCA9548A" << std::endl;
-            return -1;
+            return false;
         }
         if( !myFunction_ADS1115 || !PyCallable_Check(myFunction_ADS1115) )
         {
             std::cout << "Error: myFunction_ADS1115" << std::endl;
-            return -1;
+            return false;
         }
         if( !myFunction_analog_in || !PyCallable_Check(myFunction_analog_in) )
         {
             std::cout << "Error: myFunction_analog_in" << std::endl;
-            return -1;
+            return false;
         }
 
+        return true;
+}
+
+double HardwareComm::getSensorValue()
+{
         PyObject* myArgs_SDA_SCL = PyTuple_New(2);
         PyTuple_SetItem(myArgs_SDA_SCL,0,myConst_SCL);
         PyTuple_SetItem(myArgs_SDA_SCL,1,myConst_SDA);
@@ -106,7 +122,7 @@ double HardwareComm::getSensorValue()
         PyObject* myValue_gain2_3 = PyFloat_FromDouble(2.0/3.0);
         PyObject_SetAttr(myResult_tsl1,myAttrString_gain, myValue_gain2_3);
 
-        PyObject* myConst_P0 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P1");
+        
 
         PyObject* myArgs_tsl1_P0 = PyTuple_New(2);
         PyTuple_SetItem(myArgs_tsl1_P0,0,myResult_tsl1);
