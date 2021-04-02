@@ -115,7 +115,7 @@ double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChann
         PyObject* myArgs_adcAddress = PyDict_New();
         PyDict_SetItem(myArgs_adcAddress, myKey_address, myValue_adcAddress);
 
-        PyObject* myResult_tsl = PyObject_Call(myFunction_ADS1115, myArgs_tca, myValue_adcAddress);
+        PyObject* myResult_tsl = PyObject_Call(myFunction_ADS1115, myArgs_tca, myArgs_adcAddress);
 
 
         /* Configure gain for ADC*/
