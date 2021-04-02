@@ -95,6 +95,11 @@ double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChann
 
         PyObject* myResult_i2c = PyObject_CallObject (myFunction_I2C,myArgs_SDA_SCL);
 
+        if(!myResult_i2c)
+        {
+            std::cout << "Error with i2c" << std::endl;
+        }
+
 
         /* Get MUX obj */
         PyObject* myArgs_i2c = PyTuple_New(1);
@@ -105,6 +110,11 @@ double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChann
         PyDict_SetItem(myArgs_muxAddress, myKey_address, myValue_muxAddress);
 
         PyObject* myResult_tca = PyObject_Call(myFunction_TCA9548A, myArgs_i2c, myArgs_muxAddress);
+
+        if(!myResult_tca)
+        {
+            std::cout << "Error with MUX TCA9548A: MUX address is " << muxAddress << std::endl;
+        }
 
 
         /* Get ADC obj from MUX channel */
@@ -117,6 +127,11 @@ double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChann
         PyDict_SetItem(myArgs_adcAddress, myKey_address, myValue_adcAddress);
 
         PyObject* myResult_tsl = PyObject_Call(myFunction_ADS1115, myArgs_tca, myArgs_adcAddress);
+
+        if(!myResult_tsl)
+        {
+            std::cout << "Error with multiplexer channel " << muxChannel << " or ADC address " << adcAddress << std::endl;
+        }
 
 
         /* Configure gain for ADC*/
@@ -131,6 +146,12 @@ double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChann
         PyTuple_SetItem(myArgs_tsl_P,1, adcChannelMap[adcChannel]);
 
         PyObject* myResult_chan = PyObject_CallObject(myFunction_analog_in, myArgs_tsl_P);
+
+        if(!myResult_chan)
+        {
+            std::cout << "Error with ADC channel " << adcChannel << std::endl;
+        }
+
 
     /* Get voltage value from sensor value obj*/
     return PyFloat_AsDouble(PyObject_GetAttrString(myResult_chan,"voltage"));
