@@ -41,7 +41,6 @@ double HardwareComm::getSensorValue()
         return -1;
     }
 
-        printf("SMS:-1");
         PyRun_SimpleString("print('Hello World!')");
 
         PyObject* myConstString_SCL = PyUnicode_FromString((char*)"SCL");
@@ -76,7 +75,7 @@ double HardwareComm::getSensorValue()
             return -1;
         }
 
-        printf("SMS0");
+
         PyRun_SimpleString("print('SMS0')");
 
         PyObject* myArgs_SDA_SCL = PyTuple_New(2);
@@ -84,38 +83,54 @@ double HardwareComm::getSensorValue()
         PyTuple_SetItem(myArgs_SDA_SCL,1,myConst_SDA);
         PyObject* myResult_i2c = PyObject_CallObject (myFunction_I2C,myArgs_SDA_SCL);
 
-        printf("SMS1");
+
         PyRun_SimpleString("print('SMS1')");
 
-        PyObject* myArgs_i2c_hex = PyTuple_New(2);
+        PyObject* myArgs_i2c_hex = PyTuple_New(1);
         PyObject* myValue_hex70 = PyLong_FromLong(0x70);
         PyTuple_SetItem(myArgs_i2c_hex,0,myResult_i2c);
-        PyTuple_SetItem(myArgs_i2c_hex,1,myValue_hex70);
-        PyObject* myResult_tca = PyObject_CallObject(myFunction_TCA9548A, myArgs_i2c_hex);
 
-        printf("SMS2");
+        PyObject* myKey_address = PyUnicode_FromString("address");
+        PyObject* myArgs_hex = PyDict_New();
+        PyDict_SetItem(myArgs_hex, myKey_address, myValue_hex70);
+
+        PyObject* myResult_tca = PyObject_Call(myFunction_TCA9548A, myArgs_i2c_hex, myArgs_hex);
+
+
         PyRun_SimpleString("print('SMS2')");
 
-        PyObject* myArgs_tca0_hex = PyTuple_New(2);
-        PyObject* myValue_hex49 = PyLong_FromLong(0x49);
-        PyObject* myValue_tca0 = PyTuple_GetItem(myResult_tca,0);
+        PyObject* myArgs_tca0_hex = PyTuple_New(1);
+        //PyObject* myValue_hex49 = PyLong_FromLong(0x49);
+        PyRun_SimpleString("print('SMS2a')");
+        PyTypeObject* type = myResult_tca->ob_type;
+        const char* p = type->tp_name;
+        std::cout << "The type is" << p <<std::endl;
+        PyObject* myValue_tca0 = PyObject_GetItem(myResult_tca,PyLong_FromLong(0)); //PyTuple_GetItem wrong
+        PyRun_SimpleString("print('SMS2b')");
         PyTuple_SetItem(myArgs_tca0_hex,0,myValue_tca0);//problem?
-        PyTuple_SetItem(myArgs_tca0_hex,1,myValue_hex49);//problem
-        PyObject* myResult_tsl1 = PyObject_CallObject(myFunction_ADS1115, myArgs_tca0_hex);
+        PyRun_SimpleString("print('SMS2c')");
 
-        printf("SMS3");
+        PyObject* myValue_hex49 = PyLong_FromLong(0x49);
+        PyObject* myKey_address2 = PyUnicode_FromString("address");
+        PyObject* myArgs_hex2 = PyDict_New();
+        PyDict_SetItem(myArgs_hex2, myKey_address2, myValue_hex49);
+
+        //PyTuple_SetItem(myArgs_tca0_hex,1,myValue_hex49);//problem
+        PyObject* myResult_tsl1 = PyObject_Call(myFunction_ADS1115, myArgs_tca0_hex, myArgs_hex2);
+
+
         PyRun_SimpleString("print('SMS3')");
 
         PyObject* myAttrString_gain = PyUnicode_FromString((char*)"gain");
         PyObject* myValue_gain2_3 = PyFloat_FromDouble(2.0/3.0);
         PyObject_SetAttr(myResult_tsl1,myAttrString_gain, myValue_gain2_3);
 
-        printf("SMS4");
+
         PyRun_SimpleString("print('SMS4')");
 
-        PyObject* myConst_P0 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P0");  
+        PyObject* myConst_P0 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P1");
 
-        printf("SMS5");
+
         PyRun_SimpleString("print('SMS5')");
 
         PyObject* myArgs_tsl1_P0 = PyTuple_New(2);
@@ -124,7 +139,7 @@ double HardwareComm::getSensorValue()
         PyObject* myResult_chan1 = PyObject_CallObject(myFunction_analog_in, myArgs_tsl1_P0);
 
 
-        printf("Result: Function: %f", PyFloat_AsDouble(myResult_chan1));
+        printf("Result: Function: %f", PyFloat_AsDouble(PyObject_GetAttrString(myResult_chan1,"voltage")));
 
     return 0;
 }
