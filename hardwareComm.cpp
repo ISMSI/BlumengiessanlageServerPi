@@ -56,10 +56,6 @@ bool HardwareComm::initFunctions()
         myConst_P1 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P1");
         myConst_P2 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P2");
         myConst_P3 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P3");
-        myConst_P4 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P4");
-        myConst_P5 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P5");
-        myConst_P6 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P6");
-        myConst_P7 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P7");
         
         if( !myFunction_I2C || !PyCallable_Check(myFunction_I2C) )
         {
