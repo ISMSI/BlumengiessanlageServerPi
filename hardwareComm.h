@@ -32,6 +32,7 @@ wchar_t *programName;
         PyObject* myConst_P5;
         PyObject* myConst_P6;
         PyObject* myConst_P7;
+        PyObject* myKey_address = PyUnicode_FromString("address");
  
 public:
     HardwareComm();

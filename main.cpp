@@ -37,7 +37,7 @@ int main()
     //test_th.join();
 
     HardwareComm comm = HardwareComm();
-    comm.getSensorValue();
+    comm.getSensorValue(comm.MUX0,comm.ADC1);
 
     //sigwait(&signals, &sig);
 

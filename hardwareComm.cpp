@@ -87,49 +87,50 @@ bool HardwareComm::initFunctions()
 
 double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, ADC_ADDRESS adcAddress)
 {
+        /* Get i2c obj */
         PyObject* myArgs_SDA_SCL = PyTuple_New(2);
         PyTuple_SetItem(myArgs_SDA_SCL,0,myConst_SCL);
         PyTuple_SetItem(myArgs_SDA_SCL,1,myConst_SDA);
+
         PyObject* myResult_i2c = PyObject_CallObject (myFunction_I2C,myArgs_SDA_SCL);
 
-        PyObject* myArgs_i2c_hex = PyTuple_New(1);
+
+        /* Get MUX obj */
+        PyObject* myArgs_i2c = PyTuple_New(1);
+        PyTuple_SetItem(myArgs_i2c,0,myResult_i2c);
+
         PyObject* myValue_muxAddress = PyLong_FromLong(muxAddress);
-        PyTuple_SetItem(myArgs_i2c_hex,0,myResult_i2c);
+        PyObject* myArgs_muxAddress = PyDict_New();
+        PyDict_SetItem(myArgs_muxAddress, myKey_address, myValue_muxAddress);
 
-        PyObject* myKey_address = PyUnicode_FromString("address");
-        PyObject* myArgs_hex = PyDict_New();
-        PyDict_SetItem(myArgs_hex, myKey_address, myValue_muxAddress);
+        PyObject* myResult_tca = PyObject_Call(myFunction_TCA9548A, myArgs_i2c, myArgs_muxAddress);
 
-        PyObject* myResult_tca = PyObject_Call(myFunction_TCA9548A, myArgs_i2c_hex, myArgs_hex);
 
-        PyObject* myArgs_tca0_hex = PyTuple_New(1);
-        //PyObject* myValue_myValue_adcAddress = PyLong_FromLong(adcAddress);
-        PyTypeObject* type = myResult_tca->ob_type;
-        const char* p = type->tp_name;
-        std::cout << "The type is" << p <<std::endl;
-        PyObject* myValue_tca0 = PyObject_GetItem(myResult_tca,PyLong_FromLong(0)); //PyTuple_GetItem wrong
-        PyTuple_SetItem(myArgs_tca0_hex,0,myValue_tca0);//problem?
+        /* Get ADC obj from MUX channel 0 */
+        PyObject* myArgs_tca0 = PyTuple_New(1);
+        PyObject* myValue_tca0 = PyObject_GetItem(myResult_tca,PyLong_FromLong(0));
+        PyTuple_SetItem(myArgs_tca0,0,myValue_tca0);
 
         PyObject* myValue_adcAddress = PyLong_FromLong(adcAddress);
-        PyObject* myKey_address2 = PyUnicode_FromString("address");
-        PyObject* myArgs_hex2 = PyDict_New();
-        PyDict_SetItem(myArgs_hex2, myKey_address2, myValue_adcAddress);
+        PyObject* myArgs_adcAddress = PyDict_New();
+        PyDict_SetItem(myArgs_adcAddress, myKey_address, myValue_adcAddress);
 
-        //PyTuple_SetItem(myArgs_tca0_hex,1,myValue_adcAddress);//problem
-        PyObject* myResult_tsl1 = PyObject_Call(myFunction_ADS1115, myArgs_tca0_hex, myArgs_hex2);
+        PyObject* myResult_tsl0 = PyObject_Call(myFunction_ADS1115, myArgs_tca0, myValue_adcAddress);
 
+
+        /* Configure gain for ADC*/
         PyObject* myAttrString_gain = PyUnicode_FromString((char*)"gain");
         PyObject* myValue_gain2_3 = PyFloat_FromDouble(2.0/3.0);
-        PyObject_SetAttr(myResult_tsl1,myAttrString_gain, myValue_gain2_3);
+        PyObject_SetAttr(myResult_tsl0,myAttrString_gain, myValue_gain2_3);
 
-        
 
-        PyObject* myArgs_tsl1_P0 = PyTuple_New(2);
-        PyTuple_SetItem(myArgs_tsl1_P0,0,myResult_tsl1);
-        PyTuple_SetItem(myArgs_tsl1_P0,1,myConst_P0);
-        PyObject* myResult_chan1 = PyObject_CallObject(myFunction_analog_in, myArgs_tsl1_P0);
+        /* Get sensore value obj from ADC channel 0*/
+        PyObject* myArgs_tsl0_P0 = PyTuple_New(2);
+        PyTuple_SetItem(myArgs_tsl0_P0,0,myResult_tsl0);
+        PyTuple_SetItem(myArgs_tsl0_P0,1,myConst_P0);
 
-        std::cout << "Result: Function: " << PyFloat_AsDouble(PyObject_GetAttrString(myResult_chan1,"voltage")) << std::endl;
+        PyObject* myResult_chan0 = PyObject_CallObject(myFunction_analog_in, myArgs_tsl0_P0);
 
-    return 0;
+    /* Get voltage value from sensor value obj*/
+    return PyFloat_AsDouble(PyObject_GetAttrString(myResult_chan0,"voltage"));
 }
