@@ -3,10 +3,12 @@
 #include <iostream>
 #include <stdlib.h>
 #include <thread>
+#include <signal.h>
+
 #include "warehouse.h"
 #include "multiServer.h"
-#include <signal.h>
 #include "hardwareComm.h"
+#include "gardener.h"
 
 void static test()
 {
@@ -36,12 +38,15 @@ int main()
     //std::thread test_th = std::thread(test);
     //test_th.join();
 
-    HardwareComm comm = HardwareComm();
+    /*HardwareComm comm = HardwareComm();
     std::cout << comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC0) << std::endl;
     std::cout << comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC1) << std::endl;
-    std::cout << comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC2) << std::endl;
+    std::cout << comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC2) << std::endl;*/
 
-    //sigwait(&signals, &sig);
+    Gardener myGardner;
+
+    std::cout << "Wait for signals" << std::endl;
+    sigwait(&signals, &sig);
 
 
     return 0;
