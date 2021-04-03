@@ -96,9 +96,12 @@ const bool Warehouse::takeOut(std::string label, std::string& ware) const
 
 bool Warehouse::fill()
 {
-    putIn("test1",static_cast<uint16_t>(3));
-    putIn("sweety","Ich liebe dich, Sweety");
-    putIn("sensor", 3.314);
+    /*Insert default values*/
+    putIn("waterOnTime", true);
+    putIn("wateredToday", false);
+    putIn("lastWateringDate:month", static_cast<uint16_t>(0));
+    putIn("lastWateringDate:day", static_cast<uint16_t>(0));
+    putIn("lastWateringDate:year", static_cast<uint16_t>(0));
     return true;
 }
 

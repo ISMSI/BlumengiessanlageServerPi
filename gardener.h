@@ -5,13 +5,15 @@
 #include <chrono>
 #include <iostream>
 
+#include "warehouse.h"
+
 class Gardener
 {
 private:
     struct ThreadData 
     {
         //hardwarecomm
-        //warehouse
+        Warehouse& warehouse;
         //multiserver
     };
 
@@ -19,8 +21,8 @@ private:
     std::thread myThread;
 
     static void cycle(void* data);
-    static bool timeToWarter();
-    static bool waterThePlants();
+    static bool timeToWarter(Warehouse& Warehouse);
+    static bool waterThePlants(Warehouse& Warehouse);
     static bool emergencyStop();
     static bool emergencyAlert();
     static bool furtherRequests();
@@ -28,7 +30,7 @@ private:
     static bool endOfTheWorkDay();
 
     public:
-    Gardener();
+    Gardener(Warehouse warehouse);
     ~Gardener();
 
     

@@ -32,7 +32,7 @@ int main()
 
     std::cout << "Hello World, Sweety!" << std::endl;
 
-    //Warehouse warehouse = Warehouse();
+    Warehouse warehouse;
     //MultiServer multiServer("192.168.1.13", 3134/*, warehouse*/);
 
     //std::thread test_th = std::thread(test);
@@ -43,7 +43,7 @@ int main()
     std::cout << comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC1) << std::endl;
     std::cout << comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC2) << std::endl;*/
 
-    Gardener myGardner;
+    Gardener myGardner(warehouse);
 
     std::cout << "Wait for signals" << std::endl;
     sigwait(&signals, &sig);
