@@ -3,7 +3,12 @@
 
 #include <string>
 #include <unordered_map>
+#include <map>
 #include <iostream>
+#include "aktor.h"
+#include "pump.h"
+#include "valve.h"
+#include "sensor.h"
  
 class Warehouse
 {
@@ -12,6 +17,10 @@ std::unordered_map<std::string, bool> shelfBool;
 std::unordered_map<std::string, uint16_t> shelfInt;
 std::unordered_map<std::string, double> shelfDouble;
 std::unordered_map<std::string, std::string> shelfString;
+std::map<std::string, Valve> shelfValve;
+std::map<std::string, Sensor> shelfSensor;
+Pump pump;
+
 
  
 public:
