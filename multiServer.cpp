@@ -23,7 +23,7 @@ MultiServer::MultiServer(std::string address, uint16_t port/*, Warehouse& wareho
 
     if (open())
    { 
-        act_thread = std::thread(act, static_cast<void*>(&threadData) ); 
+        pthread_create(&act_thread, NULL, act, static_cast<void*>(&threadData) ); 
    }  
 }
 
@@ -60,7 +60,7 @@ bool MultiServer::open()
 
 void MultiServer::stop()
 {
-    act_thread.join();
+    pthread_join(act_thread, NULL);
     close(serverFd);
 }
 
@@ -162,7 +162,7 @@ void MultiServer::handleWare(int16_t clientFd)
     sendWare(clientFd);
 }
 
-void MultiServer::act(void* data)
+void* MultiServer::act(void* data)
 {
     uint32_t ret;
     ThreadData* threadData = static_cast<ThreadData*>(data);

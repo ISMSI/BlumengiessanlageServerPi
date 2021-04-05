@@ -1,20 +1,23 @@
 #include "gardener.h"
 
 
-Gardener::Gardener(Warehouse warehouse) : myThreadData{warehouse}
+Gardener::Gardener(Warehouse& warehouse) : myThreadData{warehouse}
 {
-    myThread = std::thread(cycle, static_cast<void*>(&myThreadData) ); 
+    pthread_create(&myThread, NULL, cycle, static_cast<void*>(&myThreadData) ); 
 }
 
 Gardener::~Gardener()
 {
-    myThread.join();
+    pthread_join(myThread, NULL);
 }
 
-void Gardener::cycle(void* data)
+void* Gardener::cycle(void* data)
 {
     ThreadData* threadData = static_cast<ThreadData*>(data);
     Warehouse& warehouse = threadData->warehouse;
+    sigset_t mask;
+    sigemptyset(&mask);
+    pthread_sigmask(SIG_BLOCK, &mask, NULL);
 
     while(true)
     {
@@ -59,7 +62,6 @@ bool Gardener::timeToWarter(Warehouse& warehouse)
     ret = warehouse.takeOut("lastWateringDate:year",lst_year);
     ret = warehouse.takeOut("lastWateringDate:month",lst_month);
     ret = warehouse.takeOut("lastWateringDate:day",lst_day);
-
 
     if (ret && warterOnTime)
     {
@@ -147,12 +149,14 @@ bool Gardener::taskOnDemand()
 
 bool Gardener::endOfTheWorkDay(/*warehouse*/)
 {
-    std::cout<<"Current Time :: ";
+    std::cout<<"Current Time :: " << std::endl;
 
-    time_t timeStamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::this_thread::sleep_for(std::chrono::seconds(60));
+
+    /*time_t timeStamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::cout << std::ctime(&timeStamp) << std::endl;
   
-    std::chrono::system_clock::time_point timePt = std::chrono::system_clock::now() + std::chrono::seconds(10);
+    std::chrono::system_clock::time_point timePt = std::chrono::system_clock::now() + std::chrono::seconds(60);
    
     std::cout << "Sleeping Until :: "; 
     
@@ -165,7 +169,7 @@ bool Gardener::endOfTheWorkDay(/*warehouse*/)
     std::cout<<"Woke up...Current Time :: ";
     
     timeStamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    std::cout << std::ctime(&timeStamp) << std::endl;
+    std::cout << std::ctime(&timeStamp) << std::endl;*/
 
     return true;
 }

@@ -9,7 +9,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <poll.h>
-#include <thread>         // std::thread
+#include <pthread.h>         // std::thread
 #include <iostream>       // std::cout
 
 
@@ -41,7 +41,7 @@ private:
     
     static void sendWare(int16_t clientFd);
     static void receiveWare(int16_t clientFd);
-    static void act(void* data);
+    static void* act(void* data);
     static void addClient(int16_t* serverFd, sockaddr_in* serv_addr, pollfd* communicationList, uint8_t* communications);
     static void handleWare(int16_t clientFd);
     static void closeClient(struct pollfd*, uint8_t* communications);
@@ -55,7 +55,7 @@ private:
     std::string address;
     uint16_t port;
     //Warehouse& warehouse;
-    std::thread act_thread;
+    pthread_t act_thread;
     
 
 

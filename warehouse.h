@@ -21,7 +21,6 @@ std::map<std::string, Valve> shelfValve;
 std::map<std::string, Sensor> shelfSensor;
 Pump pump;
 
-
  
 public:
     Warehouse();

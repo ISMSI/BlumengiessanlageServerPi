@@ -98,9 +98,18 @@ const bool Warehouse::takeOut(std::string label, std::string& ware) const
 
 bool Warehouse::fill()
 {
+    bool waterOnTime = true;
+    bool wateredToday = false;
+    uint16_t time_hour = 19;
+    uint16_t time_minute = 00;
+
+    std::cout << "Fill warehouse" << std::endl;
+
     /*Insert default values*/
-    putIn("waterOnTime", true);
-    putIn("wateredToday", false);
+    putIn("waterOnTime", waterOnTime);
+    putIn("wateredToday", wateredToday);
+    putIn("Time:hour",time_hour);
+    putIn("Time:minute",time_minute);
     putIn("lastWateringDate:month", static_cast<uint16_t>(0));
     putIn("lastWateringDate:day", static_cast<uint16_t>(0));
     putIn("lastWateringDate:year", static_cast<uint16_t>(0));

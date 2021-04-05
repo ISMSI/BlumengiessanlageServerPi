@@ -6,16 +6,14 @@ HardwareComm::HardwareComm(std::map<std::string, Valve> shelfValve, Pump pump)
     programName = Py_DecodeLocale("HardwareComm", NULL);
     Py_SetProgramName(programName);
     Py_Initialize();
-    initFunctions(shelfValve, pump);
-    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC0, myConst_P0));
-    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC1, myConst_P1));
-    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC2, myConst_P2));
-    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC3, myConst_P3));
+    //initFunctionsSensor();
+    initFunctionsAktor(shelfValve, pump);
+
 }
 
 HardwareComm::~HardwareComm()
 {
-    cleanupFunctions();
+    cleanupFunctionsAktor();
     Py_FinalizeEx();
     PyMem_RawFree(programName);
 }
@@ -35,7 +33,7 @@ bool HardwareComm::initGpioPin(uint8_t pin)
 
     if(!myResult_gpio_output)
     {
-        std::cout << "Error with port " << pin << "setting output" << std::endl;
+        std::cout << "Error with port " << std::to_string(pin) << " setting output" << std::endl;
         return false;
     }
     Py_DECREF(myResult_gpio_output);
@@ -45,22 +43,25 @@ bool HardwareComm::initGpioPin(uint8_t pin)
     PyObject* myArgs_PORT_HIGH = PyTuple_New(2);
     Py_INCREF(myConst_HIGH);
     PyTuple_SetItem(myArgs_PORT_HIGH,0,myValue_PORT);
-    PyTuple_SetItem(myArgs_PORT_HIGH,0,myConst_HIGH);
+    PyTuple_SetItem(myArgs_PORT_HIGH,1,myConst_HIGH);
 
     PyObject* myResult_gpio_high = PyObject_CallObject (myFunction_gpio_output, myArgs_PORT_HIGH);
     Py_DECREF(myArgs_PORT_HIGH);
     if(!myResult_gpio_high)
     {
-        std::cout << "Error with port " << pin << "setting high" << std::endl;
-        return false;
+        std::cout << "Error with port " << std::to_string(pin) << " setting high" << std::endl;
+        //return false;
     }
     Py_DECREF(myResult_gpio_high);
 
     return true;
 }
-
-bool HardwareComm::initFunctions(std::map<std::string, Valve> shelfValve, Pump pump)
+bool HardwareComm::initFunctionsSensor()
 {
+    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC0, myConst_P0));
+    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC1, myConst_P1));
+    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC2, myConst_P2));
+    adcChannelMap.insert(std::make_pair(HardwareComm::CHADC3, myConst_P3));
 
     PyObject* myModuleString_board = PyUnicode_FromString((char*)"board");
     PyObject* myModuleString_busio = PyUnicode_FromString((char*)"busio");
@@ -68,120 +69,155 @@ bool HardwareComm::initFunctions(std::map<std::string, Valve> shelfValve, Pump p
     PyObject* myModuleString_adafruit_ads1x15_ads1115 = PyUnicode_FromString((char*)"adafruit_ads1x15.ads1115");
     PyObject* myModuleString_adafruit_ads1x15_analog_in = PyUnicode_FromString((char*)"adafruit_ads1x15.analog_in");
 
-    /* Aktor */
-    PyObject* myModuleString_rpi_gpio = PyUnicode_FromString((char*)"RPi.GPIO");
-
     PyObject* myModule_board = PyImport_Import(myModuleString_board);
     PyObject* myModule_busio = PyImport_Import(myModuleString_busio);
     PyObject* myModule_adafruit_tca9548a = PyImport_Import(myModuleString_adafruit_tca9548a);
     PyObject* myModule_adafruit_ads1x15_ads1115 = PyImport_Import(myModuleString_adafruit_ads1x15_ads1115);
     PyObject* myModule_adafruit_ads1x15_analog_in = PyImport_Import(myModuleString_adafruit_ads1x15_analog_in);
 
-    /* Aktor */
-    PyObject* myModule_rpi_gpio = PyImport_Import(myModuleString_rpi_gpio);
-
-
-    if (myModule_board == NULL
-    || myModule_busio == NULL
-    || myModule_adafruit_tca9548a == NULL
-    || myModule_adafruit_ads1x15_ads1115 == NULL
-    || myModule_adafruit_ads1x15_analog_in == NULL
-    || myModule_rpi_gpio == NULL
-    )
+    if(!myModule_board)
     {
-        std::cout << "Error: Module" << std::endl;
+        std::cout << "Error: myModule_board" << std::endl;
+        return false;
+    }
+    if(!myModule_busio)
+    {
+        std::cout << "Error: myModule_busio" << std::endl;
+        return false;
+    }
+    if(!myModule_adafruit_tca9548a)
+    {
+        std::cout << "Error: myModule_adafruit_tca9548a" << std::endl;
+        return false;
+    }
+    if(!myModule_adafruit_ads1x15_ads1115)
+    {
+        std::cout << "Error: myModule_adafruit_ads1x15_ads1115" << std::endl;
+        return false;
+    }
+    if(!myModule_adafruit_ads1x15_analog_in)
+    {
+        std::cout << "Error: myModule_adafruit_ads1x15_analog_in" << std::endl;
         return false;
     }
 
-        PyObject* myConstString_SCL = PyUnicode_FromString((char*)"SCL");
-        PyObject* myConstString_SDA = PyUnicode_FromString((char*)"SDA");
+    PyObject* myConstString_SCL = PyUnicode_FromString((char*)"SCL");
+    PyObject* myConstString_SDA = PyUnicode_FromString((char*)"SDA");
 
-        myFunction_I2C = PyObject_GetAttrString(myModule_busio,(char*)"I2C");
-        myFunction_TCA9548A = PyObject_GetAttrString(myModule_adafruit_tca9548a,(char*)"TCA9548A");
-        myFunction_ADS1115 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"ADS1115");
-        myFunction_analog_in = PyObject_GetAttrString(myModule_adafruit_ads1x15_analog_in,(char*)"AnalogIn");
+    myFunction_I2C = PyObject_GetAttrString(myModule_busio,(char*)"I2C");
+    myFunction_TCA9548A = PyObject_GetAttrString(myModule_adafruit_tca9548a,(char*)"TCA9548A");
+    myFunction_ADS1115 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"ADS1115");
+    myFunction_analog_in = PyObject_GetAttrString(myModule_adafruit_ads1x15_analog_in,(char*)"AnalogIn");
 
-        /* Aktor */
-        myFunction_gpio_setmode = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"setmode");
-        myFunction_gpio_setup = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"setup");
-        myFunction_gpio_output = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"output");
-        myFunction_gpio_cleanup = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"cleanup");
+    if( !myFunction_I2C || !PyCallable_Check(myFunction_I2C) )
+    {
+        std::cout << "Error: myFunction_I2C" << std::endl;
+        return false;
+    }
+    if( !myFunction_TCA9548A || !PyCallable_Check(myFunction_TCA9548A) )
+    {
+        std::cout << "Error: myFunction_TCA9548A" << std::endl;
+        return false;
+    }
+    if( !myFunction_ADS1115 || !PyCallable_Check(myFunction_ADS1115) )
+    {
+        std::cout << "Error: myFunction_ADS1115" << std::endl;
+        return false;
+    }
+    if( !myFunction_analog_in || !PyCallable_Check(myFunction_analog_in) )
+    {
+        std::cout << "Error: myFunction_analog_in" << std::endl;
+        return false;
+    }
 
-        myConst_SCL = PyObject_GetAttr(myModule_board,myConstString_SCL);
-        myConst_SDA = PyObject_GetAttr(myModule_board, myConstString_SDA);
+    myConst_SCL = PyObject_GetAttr(myModule_board,myConstString_SCL);
+    myConst_SDA = PyObject_GetAttr(myModule_board, myConstString_SDA);
 
-        myConst_P0 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P0");
-        myConst_P1 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P1");
-        myConst_P2 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P2");
-        myConst_P3 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P3");
+    myConst_P0 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P0");
+    myConst_P1 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P1");
+    myConst_P2 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P2");
+    myConst_P3 = PyObject_GetAttrString(myModule_adafruit_ads1x15_ads1115,(char*)"P3");
 
-        /* Aktor */
-        myConst_BOARD = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"BOARD");
-        myConst_OUT = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"OUT");
-        myConst_HIGH = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"HIGH");
-        myConst_LOW = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"LOW");
-        
-        if( !myFunction_I2C || !PyCallable_Check(myFunction_I2C) )
-        {
-            std::cout << "Error: myFunction_I2C" << std::endl;
-            return false;
-        }
-        if( !myFunction_TCA9548A || !PyCallable_Check(myFunction_TCA9548A) )
-        {
-            std::cout << "Error: myFunction_TCA9548A" << std::endl;
-            return false;
-        }
-        if( !myFunction_ADS1115 || !PyCallable_Check(myFunction_ADS1115) )
-        {
-            std::cout << "Error: myFunction_ADS1115" << std::endl;
-            return false;
-        }
-        if( !myFunction_analog_in || !PyCallable_Check(myFunction_analog_in) )
-        {
-            std::cout << "Error: myFunction_analog_in" << std::endl;
-            return false;
-        }
+    return true;
+}
 
-        /*Aktor*/
-        if( !myFunction_gpio_setmode || !PyCallable_Check(myFunction_gpio_setmode) )
-        {
-            std::cout << "Error: myFunction_gpio_setmode" << std::endl;
-            return false;
-        }
-        if( !myFunction_gpio_setup || !PyCallable_Check(myFunction_gpio_setup) )
-        {
-            std::cout << "Error: myFunction_gpio_setup" << std::endl;
-            return false;
-        }
-        if( !myFunction_gpio_output || !PyCallable_Check(myFunction_gpio_output) )
-        {
-            std::cout << "Error: myFunction_gpio_output" << std::endl;
-            return false;
-        }
-        if( !myFunction_gpio_cleanup || !PyCallable_Check(myFunction_gpio_cleanup) )
-        {
-            std::cout << "Error: myFunction_gpio_cleanup" << std::endl;
-            return false;
-        }
+bool HardwareComm::initFunctionsAktor(std::map<std::string, Valve> shelfValve, Pump pump)
+{
+    PyObject* myModuleString_rpi_gpio = PyUnicode_FromString((char*)"RPi.GPIO");
 
-        /*Aktor -- Set GPIO mode*/
-        PyObject* myArgs_BOARD = PyTuple_New(1);
-        PyTuple_SetItem(myArgs_BOARD,0,myConst_BOARD);
+    PyObject* myModule_rpi_gpio = PyImport_Import(myModuleString_rpi_gpio);
 
-        PyObject* myResult_gpio_mode = PyObject_CallObject (myFunction_gpio_setmode, myArgs_BOARD);
+    if(!myModule_rpi_gpio)
+    {
+        std::cout << "Error: myModule_rpi_gpio" << std::endl;
+        return false;
+    }
 
-        if(!myResult_gpio_mode)
-        {
-            std::cout << "Error with set GPIO mode" << std::endl;
-        }
+    myFunction_gpio_setmode = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"setmode");
+    myFunction_gpio_setup = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"setup");
+    myFunction_gpio_output = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"output");
+    myFunction_gpio_cleanup = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"cleanup");
 
-        for (std::map<std::string,Valve>::iterator it=shelfValve.begin(); it!=shelfValve.end(); ++it)
-        {
-            initGpioPin(it->second.getPin());
-        }
-        initGpioPin(pump.getPin());
+    myConst_BOARD = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"BOARD");
+    myConst_OUT = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"OUT");
+    myConst_HIGH = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"HIGH");
+    myConst_LOW = PyObject_GetAttrString(myModule_rpi_gpio,(char*)"LOW");
 
-        return true;
+    if( !myFunction_gpio_setmode || !PyCallable_Check(myFunction_gpio_setmode) )
+    {
+        std::cout << "Error: myFunction_gpio_setmode" << std::endl;
+        return false;
+    }
+    if( !myFunction_gpio_setup || !PyCallable_Check(myFunction_gpio_setup) )
+    {
+        std::cout << "Error: myFunction_gpio_setup" << std::endl;
+        return false;
+    }
+    if( !myFunction_gpio_output || !PyCallable_Check(myFunction_gpio_output) )
+    {
+        std::cout << "Error: myFunction_gpio_output" << std::endl;
+        return false;
+    }
+    if( !myFunction_gpio_cleanup || !PyCallable_Check(myFunction_gpio_cleanup) )
+    {
+        std::cout << "Error: myFunction_gpio_cleanup" << std::endl;
+        return false;
+    }
+
+    /*Set GPIO mode*/
+    if(!myConst_BOARD)
+    {
+        std::cout << "Error with myConst_BOARD" << std::endl;
+        return false;
+    }
+    PyObject* myArgs_BOARD = PyTuple_New(1);
+    if (PyTuple_SetItem(myArgs_BOARD,0,myConst_BOARD) != 0)
+    {
+        std::cout << "Error with myArgs_BOARD" << std::endl;
+        return false;
+    }
+    if(!myArgs_BOARD)
+    {
+        std::cout << "Error with myArgs_BOARD" << std::endl;
+        return false;
+    }
+
+    PyObject* myResult_gpio_mode = PyObject_CallObject (myFunction_gpio_setmode, myArgs_BOARD);
+    Py_DECREF(myArgs_BOARD);
+
+    if(!myResult_gpio_mode)
+    {
+        std::cout << "Error with set GPIO mode" << std::endl;
+        return false;
+    }
+
+    for (std::map<std::string,Valve>::iterator it=shelfValve.begin(); it!=shelfValve.end(); ++it)
+    {
+        initGpioPin(it->second.getPin());
+    }
+    initGpioPin(pump.getPin());
+
+    return true;
 }
 
 double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChannel, ADC_ADDRESS adcAddress, ADC_CHANNEL adcChannel)
@@ -278,7 +314,7 @@ bool HardwareComm::switchAktor(bool on, Aktor aktor)
 
     if(!myResult_gpio_low_high)
     {
-        std::cout << "Error with port " << pin << "setting output" << std::endl;
+        std::cout << "Error with port " << std::to_string(pin) << " setting output" << std::endl;
         return false;
     }
     Py_DECREF(myResult_gpio_low_high);
@@ -286,7 +322,7 @@ bool HardwareComm::switchAktor(bool on, Aktor aktor)
 }
 
 
-bool HardwareComm::cleanupFunctions()
+bool HardwareComm::cleanupFunctionsAktor()
 {
     /*Aktor -- Cleanup*/
     PyObject* myResult_gpio_cleanup = PyObject_CallObject (myFunction_gpio_cleanup, NULL);

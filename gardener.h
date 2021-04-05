@@ -1,9 +1,11 @@
 #ifndef GARDENER_H
 #define GARDENER_H
 
-#include <thread>         // std::thread
+#include <pthread.h>         // std::thread
+#include <thread>
 #include <chrono>
 #include <iostream>
+#include <signal.h>
 
 #include "warehouse.h"
 
@@ -18,9 +20,9 @@ private:
     };
 
     ThreadData myThreadData;
-    std::thread myThread;
+    pthread_t myThread;
 
-    static void cycle(void* data);
+    static void* cycle(void* data);
     static bool timeToWarter(Warehouse& Warehouse);
     static bool waterThePlants(Warehouse& Warehouse);
     static bool emergencyStop();
@@ -30,7 +32,7 @@ private:
     static bool endOfTheWorkDay();
 
     public:
-    Gardener(Warehouse warehouse);
+    Gardener(Warehouse& warehouse);
     ~Gardener();
 
     
