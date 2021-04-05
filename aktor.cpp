@@ -11,3 +11,8 @@ Aktor::~Aktor()
 
 }
 
+uint8_t Aktor::getPin()
+{
+    return pin;
+}
+

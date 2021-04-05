@@ -10,6 +10,9 @@
 #include <iostream>       // std::cout
 #include <string>
 #include <map>
+#include "pump.h"
+#include "aktor.h"
+#include "valve.h"
 
 
 
@@ -31,19 +34,33 @@ wchar_t *programName;
         PyObject* myFunction_TCA9548A;
         PyObject* myFunction_ADS1115;
         PyObject* myFunction_analog_in;
+
+        /* Aktor */
+        PyObject* myFunction_gpio_setmode;
+        PyObject* myFunction_gpio_setup;
+        PyObject* myFunction_gpio_output;
+        PyObject* myFunction_gpio_cleanup;
+
         PyObject* myConst_SCL;
         PyObject* myConst_SDA;
         PyObject* myConst_P0;
         PyObject* myConst_P1;
         PyObject* myConst_P2;
         PyObject* myConst_P3;
+
+        /* Aktor */
+        PyObject* myConst_BOARD;
+        PyObject* myConst_OUT;
+        PyObject* myConst_HIGH;
+        PyObject* myConst_LOW;
+
         PyObject* myKey_address = PyUnicode_FromString("address");
  
         std::map<uint8_t, PyObject*> adcChannelMap;
         
 
 public:
-    HardwareComm();
+    HardwareComm(std::map<std::string, Valve> shelfValve, Pump pump);
     ~HardwareComm();
 
     enum MUX_ADDRESS
@@ -77,7 +94,11 @@ public:
 
 
     double getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChannel, ADC_ADDRESS adcAddress, ADC_CHANNEL adcChannel);
-    bool initFunctions();
+    bool switchAktor(bool on, Aktor aktor);
+private:
+    bool initFunctions(std::map<std::string, Valve> shelfValve, Pump pump);
+    bool cleanupFunctions();
+    bool initGpioPin(uint8_t pin);
 
 
 

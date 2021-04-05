@@ -4,7 +4,7 @@
 #include <iostream>
 #include "aktor.h"
 
-class Valve : Aktor
+class Valve : public Aktor
 {
 private:
 int16_t waterDuration;

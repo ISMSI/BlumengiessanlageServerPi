@@ -4,9 +4,10 @@
 #include <iostream>
 #include "aktor.h"
 
-class Pump : Aktor
+class Pump : public Aktor
 {
 private:
+
 
 
 public:
