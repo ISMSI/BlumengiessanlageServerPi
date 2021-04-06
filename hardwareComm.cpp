@@ -1,7 +1,7 @@
 #include "hardwareComm.h"
 
 
-HardwareComm::HardwareComm(std::map<std::string, Valve> shelfValve, Pump pump)
+HardwareComm::HardwareComm(std::map<std::string, Valve>& shelfValve, Pump& pump)
 {
     programName = Py_DecodeLocale("HardwareComm", NULL);
     Py_SetProgramName(programName);
@@ -290,7 +290,7 @@ double HardwareComm::getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChann
     return PyFloat_AsDouble(PyObject_GetAttrString(myResult_chan,"voltage"));
 }
 
-bool HardwareComm::switchAktor(bool on, Aktor aktor)
+bool HardwareComm::switchAktor(bool on, Aktor& aktor)
 {
     uint8_t pin = aktor.getPin();
 
@@ -302,11 +302,13 @@ bool HardwareComm::switchAktor(bool on, Aktor aktor)
     {
         Py_INCREF(myConst_LOW);
         PyTuple_SetItem(myArgs_PORT_LH,1,myConst_LOW);
+        aktor.setState(Aktor::ON);
     }
     else
     {
         Py_INCREF(myConst_HIGH);
         PyTuple_SetItem(myArgs_PORT_LH,1,myConst_HIGH);
+        aktor.setState(Aktor::OFF);
     }
 
     PyObject* myResult_gpio_low_high = PyObject_CallObject (myFunction_gpio_output, myArgs_PORT_LH);
@@ -318,6 +320,7 @@ bool HardwareComm::switchAktor(bool on, Aktor aktor)
         return false;
     }
     Py_DECREF(myResult_gpio_low_high);
+
     return true;
 }
 

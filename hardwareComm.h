@@ -60,7 +60,7 @@ wchar_t *programName;
         
 
 public:
-    HardwareComm(std::map<std::string, Valve> shelfValve, Pump pump);
+    HardwareComm(std::map<std::string, Valve>& shelfValve, Pump& pump);
     ~HardwareComm();
 
     enum MUX_ADDRESS
@@ -94,7 +94,7 @@ public:
 
 
     double getSensorValue(MUX_ADDRESS muxAddress, MUX_CHANNEL muxChannel, ADC_ADDRESS adcAddress, ADC_CHANNEL adcChannel);
-    bool switchAktor(bool on, Aktor aktor);
+    bool switchAktor(bool on, Aktor& aktor);
 private:
     bool initFunctionsSensor();
     bool initFunctionsAktor(std::map<std::string, Valve> shelfValve, Pump pump);

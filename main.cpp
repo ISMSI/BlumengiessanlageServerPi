@@ -16,7 +16,6 @@ void handler(int signo, siginfo_t *info, void *extra)
     exit(0);
 }
 
-
 int main()
 {
     sigset_t signals;
@@ -24,8 +23,6 @@ int main()
 
     sigemptyset(&signals);
     sigaddset(&signals, SIGINT);
-
-
 
     std::cout << "Hello World, Sweety!" << std::endl;
 
@@ -35,14 +32,6 @@ int main()
     //std::thread test_th = std::thread(test);
     //test_th.join();
 
-    std::map<std::string,Valve> tmpMap = std::map<std::string, Valve>();
-    tmpMap.clear();
-
-    tmpMap["Test_VALVE"] = Valve("Test_VALVE",15, 10);
-    Pump pump("Test_PUMP", 7);
-    
-
-    HardwareComm comm = HardwareComm(tmpMap, pump);
     /*std::cout << comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC0) << std::endl;
     std::cout << comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC1) << std::endl;
     std::cout << comm.getSensorValue(comm.MUX0,comm.CHMUX0,comm.ADC1, comm.CHADC2) << std::endl;*/

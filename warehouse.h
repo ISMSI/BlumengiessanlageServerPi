@@ -9,6 +9,7 @@
 #include "pump.h"
 #include "valve.h"
 #include "sensor.h"
+#include "hardwareComm.h"
  
 class Warehouse
 {
@@ -20,11 +21,14 @@ std::unordered_map<std::string, std::string> shelfString;
 std::map<std::string, Valve> shelfValve;
 std::map<std::string, Sensor> shelfSensor;
 Pump pump;
-
+HardwareComm* hwComm = NULL;
  
 public:
     Warehouse();
     ~Warehouse();
+    HardwareComm& getHardwareComm();
+    Valve& getValve(std::string label);
+    Pump& getPump();
     const bool putIn(std::string label, const bool& ware);
     const bool putIn(std::string label, const uint16_t& ware);
     const bool putIn(std::string label, const double& ware);

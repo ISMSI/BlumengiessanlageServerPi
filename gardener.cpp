@@ -56,6 +56,8 @@ bool Gardener::timeToWarter(Warehouse& warehouse)
     double lastWatering;
     bool ret;
 
+    return true;
+
     ret = warehouse.takeOut("waterOnTime",warterOnTime);
     ret = warehouse.takeOut("Time:hour",hour);
     ret = warehouse.takeOut("Time:minute",minute);
@@ -103,6 +105,7 @@ bool Gardener::timeToWarter(Warehouse& warehouse)
 
 bool Gardener::waterThePlants(Warehouse& warehouse)
 {
+    HardwareComm& hwComm = warehouse.getHardwareComm();
     uint16_t lst_year;
     uint16_t lst_month;
     uint16_t lst_day;
@@ -119,6 +122,15 @@ bool Gardener::waterThePlants(Warehouse& warehouse)
     warehouse.putIn("lastWateringDate:year",lst_year);
     warehouse.putIn("lastWateringDate:month",lst_month);
     warehouse.putIn("lastWateringDate:day",lst_day);
+    
+    if(warehouse.getValve("Dist1:Valve1").getState() == Aktor::OFF)
+    {
+        hwComm.switchAktor(true, warehouse.getValve("Dist1:Valve1"));
+    }
+    else
+    {
+        hwComm.switchAktor(false, warehouse.getValve("Dist1:Valve1"));
+    }  
 
     return true;
 }
@@ -151,7 +163,7 @@ bool Gardener::endOfTheWorkDay(/*warehouse*/)
 {
     std::cout<<"Current Time :: " << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::seconds(60));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     /*time_t timeStamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::cout << std::ctime(&timeStamp) << std::endl;

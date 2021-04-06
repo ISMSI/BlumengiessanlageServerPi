@@ -9,11 +9,27 @@ Warehouse::Warehouse()
     shelfValve = std::map<std::string, Valve>();
     shelfSensor = std::map<std::string, Sensor>();
     fill();
+    hwComm = new HardwareComm(shelfValve,pump);
 }
 
 Warehouse::~Warehouse()
 {
 
+}
+
+HardwareComm& Warehouse::getHardwareComm()
+{
+    return *hwComm;
+}
+
+Valve& Warehouse::getValve(std::string label)
+{
+    return shelfValve[label];
+}
+
+Pump& Warehouse::getPump()
+{
+    return pump;
 }
 
 const bool Warehouse::putIn(std::string label, const bool& ware)
@@ -113,12 +129,14 @@ bool Warehouse::fill()
     putIn("lastWateringDate:month", static_cast<uint16_t>(0));
     putIn("lastWateringDate:day", static_cast<uint16_t>(0));
     putIn("lastWateringDate:year", static_cast<uint16_t>(0));
-    shelfValve["Dist1:Valve1"] = Valve("Raspberry",11,10);
+    shelfValve["Dist1:Valve1"] = Valve("Raspberry",15,10);
     shelfValve["Dist1:Valve2"] = Valve("Strawberry",11,5);
     shelfValve["Dist1:Valve3"] = Valve("Corn",11,10);
     shelfValve["Dist1:Valve4"] = Valve("Curcumba",11,3);
     shelfValve["Dist2:Valve1"] = Valve("Banana",11,3);
     shelfValve["Dist2:Valve2"] = Valve("Apple",11,4);
+
+    pump = Pump("Pumpe", 7);
 
 
     return true;
