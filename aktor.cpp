@@ -26,3 +26,13 @@ enum Aktor::state Aktor::getState()
 {
     return current_state;
 }
+
+std::string Aktor::getName()
+{
+    return this->name;
+}
+
+void Aktor::setName(std::string name)
+{
+    this->name = name;
+}

@@ -23,6 +23,8 @@ Aktor(std::string name, uint8_t pin);
 uint8_t getPin();
 enum Aktor::state getState();
 void setState(Aktor::state newState);
+std::string getName();
+void setName(std::string name);
 };
 
 
