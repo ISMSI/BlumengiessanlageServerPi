@@ -126,9 +126,9 @@ bool Warehouse::fill()
 {
     bool waterOnTime = true;
     bool wateredToday = false;
-    uint16_t time_hour = 14;
-    uint16_t time_minute = 34;
-    uint16_t weekDay = 0b000000000101001;//0b0000 0000 0000 0000 = 0b0000 0000 0SoMoDi MiDoFrSa
+    uint16_t time_hour = 19;
+    uint16_t time_minute = 30;
+    uint16_t weekDay = 0b000000000010001;//0b0000 0000 0000 0000 = 0b0000 0000 0SoMoDi MiDoFrSa
 
     std::cout << "Fill warehouse" << std::endl;
 
@@ -137,18 +137,19 @@ bool Warehouse::fill()
     putIn("wateredToday", wateredToday);
     putIn("Time:hour",time_hour);
     putIn("Time:minute",time_minute);
-    putIn("lastWateringDate:month", static_cast<uint16_t>(0));
-    putIn("lastWateringDate:day", static_cast<uint16_t>(0));
+    putIn("lastWateringDate:month", static_cast<uint16_t>(3));
+    putIn("lastWateringDate:day", static_cast<uint16_t>(17));
     putIn("lastWateringDate:year", static_cast<uint16_t>(0));
     putIn("Time:weekday",weekDay);
-    shelfValve["Dist1:Valve1"] = Valve("D1V1",11,5,true);
-    shelfValve["Dist1:Valve2"] = Valve("D1V2",13,5,true);
-    shelfValve["Dist1:Valve3"] = Valve("D1V3",15,5,true);
-    shelfValve["Dist1:Valve4"] = Valve("D1V4",16,5,false);
-    shelfValve["Dist2:Valve1"] = Valve("D2V1",18,5,false);
-    shelfValve["Dist2:Valve2"] = Valve("D2V2",19,5,false);
-    shelfValve["Dist2:Valve3"] = Valve("D2V3",21,5,false);
-    shelfValve["Dist2:Valve4"] = Valve("D2V4",23,5,false);
+
+    shelfValve["Dist2:Valve4"] = Valve("Blumenkasten1",23,8,true);
+    shelfValve["Dist1:Valve1"] = Valve("Blumenkasten2",11,7,true);
+    shelfValve["Dist1:Valve2"] = Valve("Blumenkasten3",13,6,true);
+    shelfValve["Dist1:Valve3"] = Valve("Blumenkasten4",15,5,true);
+    shelfValve["Dist1:Valve4"] = Valve("Blumenkasten5",16,5,true);
+    shelfValve["Dist2:Valve2"] = Valve("KübelRundKlein",19,5,true);
+    shelfValve["Dist2:Valve1"] = Valve("KübelViereckig",18,5,true);
+    shelfValve["Dist2:Valve3"] = Valve("KübelRundGross",21,7,true);
     shelfValve["Dist3:Valve1"] = Valve("D3V1",8,5,false);
     shelfValve["Dist3:Valve2"] = Valve("D3V2",10,5,false);
     shelfValve["Dist3:Valve3"] = Valve("D3V3",12,5,false);

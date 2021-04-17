@@ -69,11 +69,11 @@ bool Gardener::timeToWarter(Warehouse& warehouse)
     if (ret && warterOnTime)
     {
         time_t tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-        tm local_tm = *localtime(&tt);
+        const tm local_tm = *localtime(&tt);
 
         weekDayCurr = (0b01000000 >> local_tm.tm_wday);
 
-        std::cout<< "Weekday bin today: " << std::hex << weekDayCurr << "; Weekday enabled: " << std::hex << weekDay << std::endl;
+        std::cout<< "Weekday bin today: " << std::hex << weekDayCurr << "; Weekday enabled: " << std::hex << weekDay << std::dec << std::endl;
 
         if((weekDayCurr & weekDay) == 0)
         {
