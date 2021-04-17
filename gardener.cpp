@@ -142,7 +142,7 @@ bool Gardener::waterThePlants(Warehouse& warehouse)
                 valveIt->second.setState(Aktor::ON);
             }
 
-            if (hwComm.switchAktor(true, warehouse.getPump()))
+            if ( (warehouse.getPump().getState() == Aktor::OFF) && (hwComm.switchAktor(true, warehouse.getPump())) )
             {
                 std::cout << "Pump turned on" << std::endl;
                 warehouse.getPump().setState(Aktor::ON);
