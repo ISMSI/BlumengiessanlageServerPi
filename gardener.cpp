@@ -53,6 +53,8 @@ bool Gardener::timeToWarter(Warehouse& warehouse)
     uint16_t lst_year;
     uint16_t lst_month;
     uint16_t lst_day;
+    uint16_t weekDay;
+    uint16_t weekDayCurr;
     double lastWatering;
     bool ret;
 
@@ -62,15 +64,26 @@ bool Gardener::timeToWarter(Warehouse& warehouse)
     ret = warehouse.takeOut("lastWateringDate:year",lst_year);
     ret = warehouse.takeOut("lastWateringDate:month",lst_month);
     ret = warehouse.takeOut("lastWateringDate:day",lst_day);
+    ret = warehouse.takeOut("Time:weekday",weekDay);//0b0000 0000 0000 0000 = 0b0000 0000 0MoDiMi DoFrSaSo
 
     if (ret && warterOnTime)
     {
         time_t tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         tm local_tm = *localtime(&tt);
 
+        weekDayCurr = (0b01000000 >> local_tm.tm_wday);
+
+        std::cout<< "Weekday bin today: " << weekDayCurr << "; Weekday enabled: " << weekDay << std::endl;
+
+        if((weekDayCurr & weekDay) == 0)
+        {
+            std::cout<< "Weekday " << local_tm.tm_wday << " is not enabled." << std::endl;
+            return false;
+        }
+
         if(local_tm.tm_year < lst_year) 
         {
-            std::cout<< "Already wartered in a future year" << std::endl;  
+            std::cout<< "Already wartered in a future year" << std::endl;
             return false;
         }
 

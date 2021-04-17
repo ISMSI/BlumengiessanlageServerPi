@@ -128,6 +128,7 @@ bool Warehouse::fill()
     bool wateredToday = false;
     uint16_t time_hour = 14;
     uint16_t time_minute = 34;
+    uint16_t weekDay = 0b000000001010010;//0b0000 0000 0000 0000 = 0b0000 0000 0MoDiMi DoFrSaSo
 
     std::cout << "Fill warehouse" << std::endl;
 
@@ -139,6 +140,7 @@ bool Warehouse::fill()
     putIn("lastWateringDate:month", static_cast<uint16_t>(0));
     putIn("lastWateringDate:day", static_cast<uint16_t>(0));
     putIn("lastWateringDate:year", static_cast<uint16_t>(0));
+    putIn("Time:weekday",weekDay);
     shelfValve["Dist1:Valve1"] = Valve("D1V1",11,5,true);
     shelfValve["Dist1:Valve2"] = Valve("D1V2",13,5,true);
     shelfValve["Dist1:Valve3"] = Valve("D1V3",15,5,true);
