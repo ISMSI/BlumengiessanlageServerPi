@@ -68,28 +68,33 @@ bool Gardener::timeToWarter(Warehouse& warehouse)
         time_t tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         tm local_tm = *localtime(&tt);
 
-        if(local_tm.tm_mday = lst_day) 
+        if(local_tm.tm_year < lst_year) 
         {
+            std::cout<< "Already wartered in a future year" << std::endl;  
             return false;
         }
 
-        if(local_tm.tm_mon = lst_month)
+        if((local_tm.tm_year == lst_year) && (local_tm.tm_mon < lst_month))
         {
+            std::cout<< "Already wartered in a future month" << std::endl;  
             return false;
         }
 
-        if(local_tm.tm_mon = lst_year) 
+        if((local_tm.tm_mon == lst_month) && (local_tm.tm_mday <= lst_day) )
         {
+            std::cout<< "Already wartered today" << std::endl;      
             return false;
         }
 
         if (local_tm.tm_hour < hour)
         {
+            std::cout<< "The hour "<< local_tm.tm_hour << " is not later than " << hour << std::endl;  
             return false;
         }
 
-        if (local_tm.tm_min < minute)
+        if ((local_tm.tm_hour == hour) && (local_tm.tm_min < minute))
         {
+            std::cout<< "The minute "<< local_tm.tm_min << " is not later than " << minute << std::endl;  
             return false;
         }
 
