@@ -122,6 +122,50 @@ bool Gardener::waterThePlants(Warehouse& warehouse)
     warehouse.putIn("lastWateringDate:year",lst_year);
     warehouse.putIn("lastWateringDate:month",lst_month);
     warehouse.putIn("lastWateringDate:day",lst_day);
+
+    for (std::map<std::string, Valve>::iterator valveIt = warehouse.getFirstValve(); valveIt != warehouse.getLastValve(); ++valveIt) 
+    {
+        if(valveIt->second.isEnabled())
+        {
+            if(valveIt->second.getState() != Valve::OFF)
+            {
+                std::cerr << "Valve " << valveIt->second.getName() << " is not closed!" << std::endl;
+                return false;
+            }
+
+            if (hwComm.switchAktor(true, valveIt->second))
+            {
+                std::cout << "Valve " << valveIt->second.getName() << " opend" << std::endl;
+                valveIt->second.setState(Valve::ON);
+            }
+
+            if (warehouse.getPump().getState() != Pump::OFF)
+            {
+                std::cerr << "Pump is not turned off" << std::endl;
+                return false;
+            }
+
+            if (hwComm.switchAktor(true, warehouse.getPump()))
+            {
+                std::cout << "Pump turned on" << std::endl;
+                warehouse.getPump().setState(Valve::ON);
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(valveIt->second.getWaterDuration_s()));
+
+            if (warehouse.getPump().getState() == Pump::ON)
+            {
+                std::cout << "Turn pump off" << std::endl;
+                hwComm.switchAktor(false, warehouse.getPump());
+            }
+
+            if (valveIt->second.getState() == Valve::ON)
+            {
+                std::cout << "Turn valve " << valveIt->second.getName() << " off" << std::endl;
+                hwComm.switchAktor(false, valveIt->second);
+            } 
+        }
+    }
     
     if(warehouse.getValve("Dist1:Valve1").getState() == Aktor::OFF)
     {
