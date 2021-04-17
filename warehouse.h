@@ -28,6 +28,8 @@ public:
     ~Warehouse();
     HardwareComm& getHardwareComm();
     Valve& getValve(std::string label);
+    std::map<std::string, Valve>::iterator getFirstValve();
+    std::map<std::string, Valve>::iterator getLastValve();
     Pump& getPump();
     const bool putIn(std::string label, const bool& ware);
     const bool putIn(std::string label, const uint16_t& ware);

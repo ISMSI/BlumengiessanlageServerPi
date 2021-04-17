@@ -27,6 +27,16 @@ Valve& Warehouse::getValve(std::string label)
     return shelfValve[label];
 }
 
+std::map<std::string, Valve>::iterator Warehouse::getFirstValve()
+{
+    return shelfValve.begin();
+}
+
+std::map<std::string, Valve>::iterator Warehouse::getLastValve()
+{
+    return shelfValve.end();
+}
+
 Pump& Warehouse::getPump()
 {
     return pump;
