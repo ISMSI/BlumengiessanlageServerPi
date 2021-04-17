@@ -128,7 +128,7 @@ bool Warehouse::fill()
     bool wateredToday = false;
     uint16_t time_hour = 14;
     uint16_t time_minute = 34;
-    uint16_t weekDay = 0b000000001010010;//0b0000 0000 0000 0000 = 0b0000 0000 0MoDiMi DoFrSaSo
+    uint16_t weekDay = 0b000000000101001;//0b0000 0000 0000 0000 = 0b0000 0000 0SoMoDi MiDoFrSa
 
     std::cout << "Fill warehouse" << std::endl;
 

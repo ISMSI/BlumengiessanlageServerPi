@@ -64,7 +64,7 @@ bool Gardener::timeToWarter(Warehouse& warehouse)
     ret = warehouse.takeOut("lastWateringDate:year",lst_year);
     ret = warehouse.takeOut("lastWateringDate:month",lst_month);
     ret = warehouse.takeOut("lastWateringDate:day",lst_day);
-    ret = warehouse.takeOut("Time:weekday",weekDay);//0b0000 0000 0000 0000 = 0b0000 0000 0MoDiMi DoFrSaSo
+    ret = warehouse.takeOut("Time:weekday",weekDay);//0b0000 0000 0000 0000 = 0b0000 0000 0SoMoDi MiDoFrSa
 
     if (ret && warterOnTime)
     {
@@ -73,7 +73,7 @@ bool Gardener::timeToWarter(Warehouse& warehouse)
 
         weekDayCurr = (0b01000000 >> local_tm.tm_wday);
 
-        std::cout<< "Weekday bin today: " << weekDayCurr << "; Weekday enabled: " << weekDay << std::endl;
+        std::cout<< "Weekday bin today: " << std::hex << weekDayCurr << "; Weekday enabled: " << std::hex << weekDay << std::endl;
 
         if((weekDayCurr & weekDay) == 0)
         {
