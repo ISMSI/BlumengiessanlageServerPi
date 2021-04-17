@@ -129,12 +129,17 @@ bool Warehouse::fill()
     putIn("lastWateringDate:month", static_cast<uint16_t>(0));
     putIn("lastWateringDate:day", static_cast<uint16_t>(0));
     putIn("lastWateringDate:year", static_cast<uint16_t>(0));
-    shelfValve["Dist1:Valve1"] = Valve("Raspberry",15,10);
-    shelfValve["Dist1:Valve2"] = Valve("Strawberry",11,5);
-    shelfValve["Dist1:Valve3"] = Valve("Corn",11,10);
-    shelfValve["Dist1:Valve4"] = Valve("Curcumba",11,3);
-    shelfValve["Dist2:Valve1"] = Valve("Banana",11,3);
-    shelfValve["Dist2:Valve2"] = Valve("Apple",11,4);
+    shelfValve["Dist1:Valve1"] = Valve("D1V1",11,5,true);
+    shelfValve["Dist1:Valve2"] = Valve("D1V2",13,5,true);
+    shelfValve["Dist1:Valve3"] = Valve("D1V3",15,5,true);
+    shelfValve["Dist1:Valve4"] = Valve("D1V4",16,5,true);
+    shelfValve["Dist2:Valve1"] = Valve("D2V1",18,5,true);
+    shelfValve["Dist2:Valve2"] = Valve("D2V2",19,5,true);
+    shelfValve["Dist2:Valve3"] = Valve("D2V3",21,5,true);
+    shelfValve["Dist2:Valve4"] = Valve("D2V4",23,5,true);
+    shelfValve["Dist3:Valve1"] = Valve("D3V1",8,5,true);
+    shelfValve["Dist3:Valve2"] = Valve("D3V2",10,5,true);
+    shelfValve["Dist3:Valve3"] = Valve("D3V3",12,5,true);
 
     pump = Pump("Pumpe", 7);
 
