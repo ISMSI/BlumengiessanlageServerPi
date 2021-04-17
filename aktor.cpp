@@ -4,7 +4,7 @@ Aktor::Aktor(std::string name, uint8_t pin)
 {
     this->name = name;
     this->pin = pin;
-    current_state = OFF;
+    current_state = Aktor::OFF;
 }
 
 Aktor::~Aktor()

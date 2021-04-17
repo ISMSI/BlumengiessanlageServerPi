@@ -10,6 +10,7 @@ Valve::Valve(std::string name, uint8_t pin, int16_t waterDuration_s)
 : Aktor(name,pin)
 {
     this->waterDuration_s = waterDuration_s;
+    
 }
 
 Valve::Valve(std::string name, uint8_t pin, int16_t waterDuration, bool enabled)

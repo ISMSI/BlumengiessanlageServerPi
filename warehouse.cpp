@@ -126,8 +126,8 @@ bool Warehouse::fill()
 {
     bool waterOnTime = true;
     bool wateredToday = false;
-    uint16_t time_hour = 19;
-    uint16_t time_minute = 00;
+    uint16_t time_hour = 14;
+    uint16_t time_minute = 34;
 
     std::cout << "Fill warehouse" << std::endl;
 
