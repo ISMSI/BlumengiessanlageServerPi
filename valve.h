@@ -7,7 +7,7 @@
 class Valve : public Aktor
 {
 private:
-int16_t waterDuration;
+int16_t waterDuration_s;
 bool enabled = false;
 
 public:
@@ -18,7 +18,8 @@ Valve(std::string name, uint8_t pin, int16_t waterDuration, bool enabled);
 void enable();
 void disable();
 bool isEnabled();
-
+void setWaterDuration_s(int16_t waterDuration_s);
+int16_t getWaterDuration_s();
 };
 
 
