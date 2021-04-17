@@ -142,14 +142,14 @@ bool Warehouse::fill()
     shelfValve["Dist1:Valve1"] = Valve("D1V1",11,5,true);
     shelfValve["Dist1:Valve2"] = Valve("D1V2",13,5,true);
     shelfValve["Dist1:Valve3"] = Valve("D1V3",15,5,true);
-    shelfValve["Dist1:Valve4"] = Valve("D1V4",16,5,true);
-    shelfValve["Dist2:Valve1"] = Valve("D2V1",18,5,true);
-    shelfValve["Dist2:Valve2"] = Valve("D2V2",19,5,true);
-    shelfValve["Dist2:Valve3"] = Valve("D2V3",21,5,true);
-    shelfValve["Dist2:Valve4"] = Valve("D2V4",23,5,true);
-    shelfValve["Dist3:Valve1"] = Valve("D3V1",8,5,true);
-    shelfValve["Dist3:Valve2"] = Valve("D3V2",10,5,true);
-    shelfValve["Dist3:Valve3"] = Valve("D3V3",12,5,true);
+    shelfValve["Dist1:Valve4"] = Valve("D1V4",16,5,false);
+    shelfValve["Dist2:Valve1"] = Valve("D2V1",18,5,false);
+    shelfValve["Dist2:Valve2"] = Valve("D2V2",19,5,false);
+    shelfValve["Dist2:Valve3"] = Valve("D2V3",21,5,false);
+    shelfValve["Dist2:Valve4"] = Valve("D2V4",23,5,false);
+    shelfValve["Dist3:Valve1"] = Valve("D3V1",8,5,false);
+    shelfValve["Dist3:Valve2"] = Valve("D3V2",10,5,false);
+    shelfValve["Dist3:Valve3"] = Valve("D3V3",12,5,false);
 
     pump = Pump("Pumpe", 7);
 

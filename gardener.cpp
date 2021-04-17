@@ -151,18 +151,18 @@ bool Gardener::waterThePlants(Warehouse& warehouse)
 
             std::this_thread::sleep_for(std::chrono::seconds(valveIt->second.getWaterDuration_s()));
 
-            if (warehouse.getPump().getState() == Aktor::ON)
-            {
-                std::cout << "Turn pump off" << std::endl;
-                hwComm.switchAktor(false, warehouse.getPump());
-            }
-
             if (valveIt->second.getState() == Aktor::ON)
             {
                 std::cout << "Turn valve " << valveIt->second.getName() << " off" << std::endl;
                 hwComm.switchAktor(false, valveIt->second);
             } 
         }
+    }
+    
+    if (warehouse.getPump().getState() == Aktor::ON)
+    {
+        std::cout << "Turn pump off" << std::endl;
+        hwComm.switchAktor(false, warehouse.getPump());
     }
 
     return true;
