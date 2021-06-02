@@ -27,9 +27,9 @@ private:
     static bool waterThePlants(Warehouse& Warehouse);
     static bool emergencyStop();
     static bool emergencyAlert();
-    static bool furtherRequests();
-    static bool taskOnDemand();
-    static bool endOfTheWorkDay();
+    static bool furtherRequests(Warehouse& warehouse);
+    static bool taskOnDemand(Warehouse& warehouse);
+    static bool endOfTheWorkDay(Warehouse& warehouse);
 
     public:
     Gardener(Warehouse& warehouse);

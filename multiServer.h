@@ -11,6 +11,7 @@
 #include <poll.h>
 #include <pthread.h>         // std::thread
 #include <iostream>       // std::cout
+#include "warehouse.h"
 
 
  
@@ -33,7 +34,13 @@ private:
         struct pollfd* communicationList;
         uint8_t* communications;
         struct sockaddr_in* serv_addr; 
-        /*Warehouse* warehouse;*/
+        /*Warehouse& warehouse;*/
+        /*ThreadData(int16_t* serverFd, struct pollfd* communicationList, 
+        uint8_t* communications, struct sockaddr_in* serv_addr, Warehouse& warehouse)
+        :serverFd(serverFd), communicationList(communicationList), serv_addr(serv_addr),warehouse(warehouse)
+        {
+
+        }*/
     };
 
     bool open();
@@ -41,9 +48,10 @@ private:
     
     static void sendWare(int16_t clientFd);
     static void receiveWare(int16_t clientFd);
+    static void receiveRequest(int16_t clientFd/*, Warehouse& warehouse*/);
     static void* act(void* data);
     static void addClient(int16_t* serverFd, sockaddr_in* serv_addr, pollfd* communicationList, uint8_t* communications);
-    static void handleWare(int16_t clientFd);
+    static void handleWare(int16_t clientFd/*, Warehouse& warehouse*/);
     static void closeClient(struct pollfd*, uint8_t* communications);
 
     ThreadData threadData;
@@ -54,8 +62,10 @@ private:
     struct sockaddr_in serv_addr{}; 
     std::string address;
     uint16_t port;
-    //Warehouse& warehouse;
+    /*Warehouse& warehouse;*/
     pthread_t act_thread;
+
+    
     
 
 

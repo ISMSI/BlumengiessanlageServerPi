@@ -128,7 +128,7 @@ bool Warehouse::fill()
     bool wateredToday = false;
     uint16_t time_hour = 19;
     uint16_t time_minute = 30;
-    uint16_t weekDay = 0b000000000010001;//0b0000 0000 0000 0000 = 0b0000 0000 0SoMoDi MiDoFrSa
+    uint16_t weekDay = 0b000000001101010;//0b0000 0000 0000 0000 = 0b0000 0000 0SoMoDi MiDoFrSa
 
     std::cout << "Fill warehouse" << std::endl;
 
@@ -155,6 +155,10 @@ bool Warehouse::fill()
     shelfValve["Dist3:Valve3"] = Valve("D3V3",12,5,false);
 
     pump = Pump("Pumpe", 7);
+
+    
+
+    //waterNow.store(false);
 
 
     return true;

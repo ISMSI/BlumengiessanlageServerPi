@@ -1,17 +1,17 @@
 #include "multiServer.h"
 
 
-MultiServer::MultiServer(std::string address, uint16_t port/*, Warehouse& warehouse*/)
-/*:warehouse(warehouse)*/
+MultiServer::MultiServer(std::string address, uint16_t port/*, Warehouse& warehouse_ext*/)
+/*:warehouse(warehouse_ext), threadData({&serverFd, &communicationList[1], &communications, &serv_addr, warehouse_ext})*/
 {
     this->address = address;
     this->port = port;
+
 
     threadData.communicationList = &communicationList[0];
     threadData.communications = &communications;
     threadData.serverFd = &serverFd;
     threadData.serv_addr = &serv_addr;
-    //threadData.warehouse = &warehouse;  
 
     communications = 0;
 
@@ -83,14 +83,15 @@ void MultiServer::addClient(int16_t* serverFd, sockaddr_in* serv_addr, pollfd* c
     //inform user of socket number - used in send and receive commands  
     printf("New connection , socket fd is %d \n" , clientFd);
 
-    /*
+    //receiveWare(clientFd);
+    
     //send new connection greeting message  
-    if( send(clientFd, message.c_str(), message.size(), 0) < 0 ) 
+    /*if( send(clientFd, message.c_str(), message.size(), 0) < 0 ) 
     {   
         perror("send ");   
     } else {
         puts("Welcome message sent successfully");  
-    } */ 
+    } */
              
             
     //add new socket to array of sockets  
@@ -155,17 +156,41 @@ void MultiServer::receiveWare(int16_t clientFd)
 
 }
 
-
-void MultiServer::handleWare(int16_t clientFd)
+void MultiServer::receiveRequest(int16_t clientFd/*, Warehouse& warehouse*/)
 {
-    receiveWare(clientFd);
+    char recv_buffer[1];
+    int8_t ret;
+
+
+    ret =read( clientFd , recv_buffer, 1);
+    
+    if (recv_buffer[0] == 0b01010011)
+    {
+        std::cout << "Water now!!!" <<std::endl;
+        //warehouse.waterNow.store(true);
+    }
+    else{
+        std::cout << "Reeived crap!!!" <<std::endl;
+    }
+
     sendWare(clientFd);
+}
+
+
+
+void MultiServer::handleWare(int16_t clientFd/*, Warehouse& warehouse*/)
+{
+    receiveRequest(clientFd/*, warehouse*/);
+    //receiveWare(clientFd);
+    //sendWare(clientFd);
 }
 
 void* MultiServer::act(void* data)
 {
     uint32_t ret;
     ThreadData* threadData = static_cast<ThreadData*>(data);
+    //Warehouse warehouse;// = threadData->warehouse;
+    
 
     while (true)
    {
@@ -201,6 +226,21 @@ void* MultiServer::act(void* data)
             } 
             short int  revent = threadData->communicationList[i].revents;
 
+            if (revent & POLLIN)
+            {
+                std::cout << "POLLIN" << std::endl;
+                if (threadData->communicationList[i].fd == *threadData->serverFd)
+                {
+                    /*Add client*/
+                    std::cout << "addClientFunc" << std::endl;
+                    addClient(threadData->serverFd, threadData->serv_addr, threadData->communicationList, threadData->communications);
+                } else {
+                    /*Handle communication*/
+                    std::cout << "Handle Comm" << std::endl;
+                    handleWare(threadData->communicationList[i].fd/*, warehouse*/);
+                } 
+            }
+
             if (revent & POLLHUP)
             {
                 if (threadData->communicationList[i].fd == *threadData->serverFd)
@@ -209,18 +249,6 @@ void* MultiServer::act(void* data)
                 } else {
                     std::cout << "POLLHUP" << std::endl;
                     closeClient(&threadData->communicationList[i], threadData->communications);
-                } 
-            }
-            else if (revent & POLLIN)
-            {
-                std::cout << "POLLIN" << std::endl;
-                if (threadData->communicationList[i].fd == *threadData->serverFd)
-                {
-                    /*Add client*/
-                    addClient(threadData->serverFd, threadData->serv_addr, threadData->communicationList, threadData->communications);
-                } else {
-                    /*Handle communication*/
-                    handleWare(threadData->communicationList[i].fd);
                 } 
             }
             else

@@ -27,7 +27,9 @@ int main()
     std::cout << "Hello World, Sweety!" << std::endl;
 
     Warehouse warehouse;
-    //MultiServer multiServer("192.168.1.13", 3134/*, warehouse*/);
+    
+    MultiServer multiServer("192.168.1.13", 3132/*, warehouse*/);
+    Gardener myGardner(warehouse);
 
     //std::thread test_th = std::thread(test);
     //test_th.join();
@@ -51,7 +53,7 @@ int main()
 
     }*/
 
-    Gardener myGardner(warehouse);
+    
 
     std::cout << "Wait for signals" << std::endl;
     struct sigaction action;

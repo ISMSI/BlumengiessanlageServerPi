@@ -32,14 +32,14 @@ void* Gardener::cycle(void* data)
             }
         }
 
-        if (furtherRequests())
+        if (furtherRequests(warehouse))
         {
-            taskOnDemand();
+            taskOnDemand(warehouse);
         }
 
-        if (endOfTheWorkDay())
+        if (endOfTheWorkDay(warehouse))
         {
-            taskOnDemand();
+            taskOnDemand(warehouse);
         }
     }
 }
@@ -192,23 +192,50 @@ bool Gardener::emergencyAlert()
     return true;
 }
 
-bool Gardener::furtherRequests()
+bool Gardener::furtherRequests(Warehouse& warehouse)
 {
     std::cout<< "furtherRequests: false" << std::endl;
+
+    /*if(warehouse.waterNow.load())
+    {
+        return true;
+    }*/
+
     return false;
 }
 
-bool Gardener::taskOnDemand()
+bool Gardener::taskOnDemand(Warehouse& warehouse)
 {
     std::cout<< "taskOnDemand: true" << std::endl;
+
+    /*if(warehouse.waterNow.load())
+    {
+        //waterThePlants(warehouse);
+        std::cout<< "Water the plans :D" << std::endl;
+        
+        //warehouse.waterNow.store(false);
+    }*/
+
     return true;
 }
 
-bool Gardener::endOfTheWorkDay(/*warehouse*/)
+bool Gardener::endOfTheWorkDay(Warehouse& warehouse)
 {
     std::cout<<"Current Time :: " << std::endl;
 
     std::this_thread::sleep_for(std::chrono::minutes(1));
+
+    struct timespec abstime {};
+    abstime.tv_sec = 60;
+
+
+    /*pthread_mutex_lock(&warehouse.waterLock);
+
+    pthread_cond_timedwait(&warehouse.waterWait, &warehouse.waterLock, &abstime);
+
+    pthread_mutex_unlock(&warehouse.waterLock);*/
+
+
 
     /*time_t timeStamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::cout << std::ctime(&timeStamp) << std::endl;
@@ -227,6 +254,11 @@ bool Gardener::endOfTheWorkDay(/*warehouse*/)
     
     timeStamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::cout << std::ctime(&timeStamp) << std::endl;*/
+
+    /*if(warehouse.waterNow.load())
+    {
+       return false;
+    }*/
 
     return true;
 }

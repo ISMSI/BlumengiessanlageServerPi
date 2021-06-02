@@ -5,11 +5,14 @@
 #include <unordered_map>
 #include <map>
 #include <iostream>
+#include <pthread.h>
+#include <atomic>
 #include "aktor.h"
 #include "pump.h"
 #include "valve.h"
 #include "sensor.h"
 #include "hardwareComm.h"
+
  
 class Warehouse
 {
@@ -40,6 +43,12 @@ public:
     const bool takeOut(std::string label, double& ware) const;
     const bool takeOut(std::string label, std::string& ware) const;
     bool fill();
+
+    /*pthread_cond_t waterWait;
+    pthread_mutex_t waterLock;
+    std::atomic<bool> waterNow;*/
+
+    
 };
  
 #endif //WAREHOUSE_H
