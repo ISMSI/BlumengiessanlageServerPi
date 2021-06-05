@@ -28,7 +28,7 @@ int main()
 
     Warehouse warehouse;
     
-    MultiServer multiServer("192.168.1.13", 3132/*, warehouse*/);
+    MultiServer multiServer("192.168.1.13", 3132, warehouse);
     Gardener myGardner(warehouse);
 
     //std::thread test_th = std::thread(test);

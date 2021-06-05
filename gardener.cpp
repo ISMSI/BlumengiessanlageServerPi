@@ -47,7 +47,6 @@ void* Gardener::cycle(void* data)
 bool Gardener::timeToWarter(Warehouse& warehouse)
 {
     bool warterOnTime;
-    bool wateredToday;
     uint16_t hour;
     uint16_t minute;
     uint16_t lst_year;
@@ -74,6 +73,8 @@ bool Gardener::timeToWarter(Warehouse& warehouse)
         weekDayCurr = (0b01000000 >> local_tm.tm_wday);
 
         std::cout<< "Weekday bin today: " << std::hex << weekDayCurr << "; Weekday enabled: " << std::hex << weekDay << std::dec << std::endl;
+        std::cout << "day: " << local_tm.tm_mday << "month: " << local_tm.tm_mon  << "year: " << local_tm.tm_year << std::endl;
+
 
         if((weekDayCurr & weekDay) == 0)
         {
@@ -135,9 +136,11 @@ bool Gardener::waterThePlants(Warehouse& warehouse)
     lst_month = local_tm.tm_mon;
     lst_day = local_tm.tm_mday;
 
+    
     warehouse.putIn("lastWateringDate:year",lst_year);
     warehouse.putIn("lastWateringDate:month",lst_month);
     warehouse.putIn("lastWateringDate:day",lst_day);
+
 
     for (std::map<std::string, Valve>::iterator valveIt = warehouse.getFirstValve(); valveIt != warehouse.getLastValve(); ++valveIt) 
     {
