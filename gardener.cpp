@@ -141,6 +141,7 @@ bool Gardener::waterThePlants(Warehouse& warehouse)
     warehouse.putIn("lastWateringDate:month",lst_month);
     warehouse.putIn("lastWateringDate:day",lst_day);
 
+    //return true; //do not warter
 
     for (std::map<std::string, Valve>::iterator valveIt = warehouse.getFirstValve(); valveIt != warehouse.getLastValve(); ++valveIt) 
     {

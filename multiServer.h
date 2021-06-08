@@ -36,8 +36,11 @@ private:
         struct sockaddr_in* serv_addr; 
         Warehouse& warehouse;
         ThreadData(int16_t* serverFd, struct pollfd* communicationList, 
-        uint8_t* communications, struct sockaddr_in* serv_addr, Warehouse& warehouse)
-        :serverFd(serverFd), communicationList(communicationList), serv_addr(serv_addr),warehouse(warehouse)
+        uint8_t* communications, struct sockaddr_in* serv_addr, 
+        Warehouse& warehouse)
+        :serverFd(serverFd), communicationList(communicationList), 
+        communications(communications), serv_addr(serv_addr),
+        warehouse(warehouse)
         {
 
         }

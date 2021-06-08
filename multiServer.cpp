@@ -2,28 +2,17 @@
 
 
 MultiServer::MultiServer(std::string address, uint16_t port, Warehouse& warehouse_ext)
-:warehouse(warehouse_ext), threadData{&serverFd, &communicationList[0], &communications, &serv_addr, warehouse_ext}
+:warehouse(warehouse_ext), communications(0), threadData{&serverFd, &communicationList[0], &communications, &serv_addr, warehouse_ext}
 {
     this->address = address;
     this->port = port;
 
-    std::cout << threadData.communicationList << std::endl;
-    std::cout << threadData.communications << std::endl;
-    std::cout << threadData.serverFd << std::endl;
-    std::cout << threadData.serv_addr << std::endl;
-
-
-    threadData.communicationList = &communicationList[0];
+   /* threadData.communicationList = &communicationList[0];
     threadData.communications = &communications;
     threadData.serverFd = &serverFd;
-    threadData.serv_addr = &serv_addr;
+    threadData.serv_addr = &serv_addr;*/
 
-    std::cout << threadData.communicationList << std::endl;
-    std::cout << threadData.communications << std::endl;
-    std::cout << threadData.serverFd << std::endl;
-    std::cout << threadData.serv_addr << std::endl;
 
-    communications = 0;
 
     for (int i = 0; i < MAX_CONNECTIONS; i++)
    {
