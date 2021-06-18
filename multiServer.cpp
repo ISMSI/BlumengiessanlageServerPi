@@ -155,7 +155,7 @@ void MultiServer::receiveWare(int16_t clientFd)
 
 }
 
-void MultiServer::receiveRequest(int16_t clientFd/*, Warehouse& warehouse*/)
+void MultiServer::receiveRequest(int16_t clientFd, Warehouse& warehouse)
 {
     char recv_buffer[1];
     int8_t ret;
@@ -165,8 +165,15 @@ void MultiServer::receiveRequest(int16_t clientFd/*, Warehouse& warehouse*/)
     
     if (recv_buffer[0] == 0b01010011)
     {
-        std::cout << "Water now!!!" <<std::endl;
-        //warehouse.waterNow.store(true);
+        std::cout << "Received water request" <<std::endl;
+
+        pthread_mutex_lock(&warehouse.waterLock);
+        warehouse.waterNow.store(true);
+        pthread_cond_signal(&warehouse.waterWait);
+        pthread_mutex_unlock(&warehouse.waterLock);
+
+        std::cout << "Water request forwared to gardner" <<std::endl;
+        
     }
     else{
         std::cout << "Reeived crap!!!" <<std::endl;
@@ -177,9 +184,9 @@ void MultiServer::receiveRequest(int16_t clientFd/*, Warehouse& warehouse*/)
 
 
 
-void MultiServer::handleWare(int16_t clientFd/*, Warehouse& warehouse*/)
+void MultiServer::handleWare(int16_t clientFd, Warehouse& warehouse)
 {
-    receiveRequest(clientFd/*, warehouse*/);
+    receiveRequest(clientFd, warehouse);
     //receiveWare(clientFd);
     //sendWare(clientFd);
 }
@@ -188,7 +195,7 @@ void* MultiServer::act(void* data)
 {
     uint32_t ret;
     ThreadData* threadData = static_cast<ThreadData*>(data);
-    //Warehouse warehouse;// = threadData->warehouse;
+    Warehouse& warehouse = threadData->warehouse;
     
 
     while (true)
@@ -236,7 +243,7 @@ void* MultiServer::act(void* data)
                 } else {
                     /*Handle communication*/
                     std::cout << "Handle Comm" << std::endl;
-                    handleWare(threadData->communicationList[i].fd/*, warehouse*/);
+                    handleWare(threadData->communicationList[i].fd, warehouse);
                 } 
             }
 

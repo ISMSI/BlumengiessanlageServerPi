@@ -10,6 +10,11 @@ Warehouse::Warehouse()
     shelfSensor = std::map<std::string, Sensor>();
     fill();
     hwComm = new HardwareComm(shelfValve,pump);
+
+    waterWait = PTHREAD_COND_INITIALIZER;
+    waterLock = PTHREAD_MUTEX_INITIALIZER;
+    waterNow.store(false);
+
 }
 
 Warehouse::~Warehouse()
@@ -138,27 +143,23 @@ bool Warehouse::fill()
     putIn("Time:hour",time_hour);
     putIn("Time:minute",time_minute);
     putIn("lastWateringDate:month", static_cast<uint16_t>(5)); //mon -1
-    putIn("lastWateringDate:day", static_cast<uint16_t>(8)); //actual day
+    putIn("lastWateringDate:day", static_cast<uint16_t>(10)); //actual day
     putIn("lastWateringDate:year", static_cast<uint16_t>(121)); // 2021-1900
     putIn("Time:weekday",weekDay);
 
     shelfValve["Dist2:Valve4"] = Valve("Blumenkasten1",23,6,true);
-    shelfValve["Dist1:Valve1"] = Valve("Blumenkasten2",11,5,true);
-    shelfValve["Dist1:Valve2"] = Valve("Blumenkasten3",13,5,true);
-    shelfValve["Dist1:Valve3"] = Valve("Blumenkasten4",15,5,false);
-    shelfValve["Dist1:Valve4"] = Valve("Blumenkasten5",16,5,true);
+    shelfValve["Dist1:Valve1"] = Valve("Blumenkasten2",11,6,true);
+    shelfValve["Dist1:Valve2"] = Valve("Blumenkasten3",13,6,true);
+    shelfValve["Dist1:Valve3"] = Valve("Blumenkasten4",15,6,true);
+    shelfValve["Dist1:Valve4"] = Valve("Blumenkasten5",16,6,true);
     shelfValve["Dist2:Valve2"] = Valve("KübelRundKlein",19,5,true);
-    shelfValve["Dist2:Valve1"] = Valve("KübelViereckig",18,3,true);
+    shelfValve["Dist2:Valve1"] = Valve("KübelViereckig",18,2,true);
     shelfValve["Dist2:Valve3"] = Valve("KübelRundGross",21,5,true);
     shelfValve["Dist3:Valve1"] = Valve("D3V1",8,5,false);
     shelfValve["Dist3:Valve2"] = Valve("D3V2",10,5,false);
     shelfValve["Dist3:Valve3"] = Valve("D3V3",12,5,false);
 
     pump = Pump("Pumpe", 7);
-
-    
-
-    //waterNow.store(false);
 
 
     return true;

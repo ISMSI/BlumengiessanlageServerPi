@@ -44,9 +44,9 @@ public:
     const bool takeOut(std::string label, std::string& ware) const;
     bool fill();
 
-    /*pthread_cond_t waterWait;
+    pthread_cond_t waterWait;
     pthread_mutex_t waterLock;
-    std::atomic<bool> waterNow;*/
+    std::atomic<bool> waterNow;
 
     
 };

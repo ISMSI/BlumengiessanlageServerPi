@@ -37,7 +37,7 @@ void* Gardener::cycle(void* data)
             taskOnDemand(warehouse);
         }
 
-        if (endOfTheWorkDay(warehouse))
+        if (!endOfTheWorkDay(warehouse))
         {
             taskOnDemand(warehouse);
         }
@@ -198,47 +198,61 @@ bool Gardener::emergencyAlert()
 
 bool Gardener::furtherRequests(Warehouse& warehouse)
 {
-    std::cout<< "furtherRequests: false" << std::endl;
+    
 
-    /*if(warehouse.waterNow.load())
+    if(warehouse.waterNow.load())
     {
+        std::cout<< "furtherRequests: true" << std::endl;
         return true;
-    }*/
+    }
+
+    std::cout<< "furtherRequests: false" << std::endl;
 
     return false;
 }
 
 bool Gardener::taskOnDemand(Warehouse& warehouse)
 {
-    std::cout<< "taskOnDemand: true" << std::endl;
-
-    /*if(warehouse.waterNow.load())
+    pthread_mutex_lock(&warehouse.waterLock);  
+    if(warehouse.waterNow.load())
     {
-        //waterThePlants(warehouse);
-        std::cout<< "Water the plans :D" << std::endl;
+        waterThePlants(warehouse);
+
+        std::cout<< "Water now :D" << std::endl;
         
-        //warehouse.waterNow.store(false);
-    }*/
+        warehouse.waterNow.store(false);
+    }
+    pthread_mutex_unlock(&warehouse.waterLock);
+
+    std::cout<< "taskOnDemand: true" << std::endl;
 
     return true;
 }
 
 bool Gardener::endOfTheWorkDay(Warehouse& warehouse)
 {
+    int ret = 0;
     std::cout<<"Current Time :: " << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::minutes(1));
+    //std::this_thread::sleep_for(std::chrono::minutes(1));
 
-    struct timespec abstime {};
-    abstime.tv_sec = 60;
+    struct timespec abstime;
+    clock_gettime(CLOCK_REALTIME, &abstime);
+    abstime.tv_sec += 60;
+    //Calc remaining wait time
 
+   
+    std::cout<< "Begin to wait" << std::endl;
+    
+    pthread_mutex_lock(&warehouse.waterLock);
+    while (ret == 0 && !warehouse.waterNow.load())
+    {
+        ret = pthread_cond_timedwait(&warehouse.waterWait, &warehouse.waterLock, &abstime); 
+    }
+    pthread_mutex_unlock(&warehouse.waterLock);
+    
 
-    /*pthread_mutex_lock(&warehouse.waterLock);
-
-    pthread_cond_timedwait(&warehouse.waterWait, &warehouse.waterLock, &abstime);
-
-    pthread_mutex_unlock(&warehouse.waterLock);*/
-
+    std::cout<< "Wait done: " << ret  << std::endl;
 
 
     /*time_t timeStamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -259,10 +273,11 @@ bool Gardener::endOfTheWorkDay(Warehouse& warehouse)
     timeStamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::cout << std::ctime(&timeStamp) << std::endl;*/
 
-    /*if(warehouse.waterNow.load())
+    if(warehouse.waterNow.load())
     {
-       return false;
-    }*/
+        std::cout<< "Async request" << std::endl;
+        return false;
+    }
 
     return true;
 }

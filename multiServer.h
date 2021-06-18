@@ -11,6 +11,7 @@
 #include <poll.h>
 #include <pthread.h>         // std::thread
 #include <iostream>       // std::cout
+#include <condition_variable>
 #include "warehouse.h"
 
 
@@ -51,10 +52,10 @@ private:
     
     static void sendWare(int16_t clientFd);
     static void receiveWare(int16_t clientFd);
-    static void receiveRequest(int16_t clientFd/*, Warehouse& warehouse*/);
+    static void receiveRequest(int16_t clientFd, Warehouse& warehouse);
     static void* act(void* data);
     static void addClient(int16_t* serverFd, sockaddr_in* serv_addr, pollfd* communicationList, uint8_t* communications);
-    static void handleWare(int16_t clientFd/*, Warehouse& warehouse*/);
+    static void handleWare(int16_t clientFd, Warehouse& warehouse);
     static void closeClient(struct pollfd*, uint8_t* communications);
 
     ThreadData threadData;
