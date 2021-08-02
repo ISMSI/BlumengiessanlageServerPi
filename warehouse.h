@@ -11,7 +11,9 @@
 #include "pump.h"
 #include "valve.h"
 #include "sensor.h"
+#include "hardwareCommInterface.h"
 #include "hardwareComm.h"
+#include "hardwareCommDummy.h"
 
  
 class Warehouse
@@ -24,12 +26,12 @@ std::unordered_map<std::string, std::string> shelfString;
 std::map<std::string, Valve> shelfValve;
 std::map<std::string, Sensor> shelfSensor;
 Pump pump;
-HardwareComm* hwComm = NULL;
+HardwareCommInterface* hwComm = NULL;
  
 public:
     Warehouse();
     ~Warehouse();
-    HardwareComm& getHardwareComm();
+    HardwareCommInterface& getHardwareComm();
     Valve& getValve(std::string label);
     std::map<std::string, Valve>::iterator getFirstValve();
     std::map<std::string, Valve>::iterator getLastValve();

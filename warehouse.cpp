@@ -9,7 +9,7 @@ Warehouse::Warehouse()
     shelfValve = std::map<std::string, Valve>();
     shelfSensor = std::map<std::string, Sensor>();
     fill();
-    hwComm = new HardwareComm(shelfValve,pump);
+    hwComm = new HardwareCommDummy(shelfValve,pump);
 
     waterWait = PTHREAD_COND_INITIALIZER;
     waterLock = PTHREAD_MUTEX_INITIALIZER;
@@ -22,7 +22,7 @@ Warehouse::~Warehouse()
 
 }
 
-HardwareComm& Warehouse::getHardwareComm()
+HardwareCommInterface& Warehouse::getHardwareComm()
 {
     return *hwComm;
 }

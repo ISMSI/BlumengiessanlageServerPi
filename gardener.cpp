@@ -122,7 +122,7 @@ bool Gardener::timeToWarter(Warehouse& warehouse)
 
 bool Gardener::waterThePlants(Warehouse& warehouse)
 {
-    HardwareComm& hwComm = warehouse.getHardwareComm();
+    HardwareCommInterface& hwComm = warehouse.getHardwareComm();
     uint16_t lst_year;
     uint16_t lst_month;
     uint16_t lst_day;
@@ -165,7 +165,9 @@ bool Gardener::waterThePlants(Warehouse& warehouse)
                 warehouse.getPump().setState(Aktor::ON);
             }
 
+            std::cout << "sleep..." << std::flush;
             std::this_thread::sleep_for(std::chrono::seconds(valveIt->second.getWaterDuration_s()));
+            std::cout << " done" << std::endl;
 
             if (valveIt->second.getState() == Aktor::ON)
             {

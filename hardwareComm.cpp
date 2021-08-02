@@ -2,6 +2,7 @@
 
 
 HardwareComm::HardwareComm(std::map<std::string, Valve>& shelfValve, Pump& pump)
+: HardwareCommInterface(shelfValve, pump)
 {
     programName = Py_DecodeLocale("HardwareComm", NULL);
     Py_SetProgramName(programName);
